@@ -41,3 +41,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/VadimVasilyev1994/circadianTT
+BugReports: https://github.com/VadimVasilyev1994/circadianTT/issues
