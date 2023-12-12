@@ -23,27 +23,27 @@ perpchip_slopes <- function(h, delta) {
 
 perpchip <- function(xi,yi,x) {
   stopifnot(is.numeric(xi), is.numeric(yi), is.numeric(x))
-  if (!pracma::is.sorted(xi)) 
+  if (!pracma::is.sorted(xi))
     stop("Argument 'xi' must be a sorted vector of real numbers.")
   n <- length(xi)
-  if (length(yi) != n) 
+  if (length(yi) != n)
     stop("Arguments 'xi', 'yi' must be vectors of equal length.")
-  if (n <= 2) 
+  if (n <= 2)
     stop("At least three points needed for cubic interpolation.")
   h <- diff(xi)
   delta <- diff(yi) / h
   x_used <- xi
   y_used <- yi
-  
-  # Processing data to make it periodic in end conditons 
+
+  # Processing data to make it periodic in end conditons
   yi <- c(yi[length(yi)-1],yi,yi[2])
   xi <- c(xi[1]-(xi[length(xi)]-xi[length(xi)-1]),xi,xi[length(xi)]+(xi[2]-xi[1]))
   deltai <- c(delta[length(delta)], delta, delta[1])
   hi <- diff(xi)
-  
+
   d <- perpchip_slopes(hi, deltai)
   d <- d[2:(length(d)-1)]
-  
+
   # Fitting to the original non-extended data now
   a <- (3 * delta - 2 * d[1:(n - 1)] - d[2:n])/h
   b <- (d[1:(n - 1)] - 2 * delta + d[2:n])/h^2
@@ -71,7 +71,7 @@ shift_ts <- function(ts, target_peak) {
   shift_dist <- target_peak - max_ind
   new_ts <- c()
   for (i in 1:obs_num) {
-    new_ts[i] <- extended_ts[i+obs_num-shift_dist] 
+    new_ts[i] <- extended_ts[i+obs_num-shift_dist]
   }
   return(new_ts)
 }
@@ -84,11 +84,11 @@ extract_elements_func_robust <- function(data) {
   return(c(unname(data$center), unname(c(data$cov))))
 }
 
-quiet <- function(x) { 
-  sink(tempfile()) 
-  on.exit(sink()) 
-  invisible(force(x)) 
-} 
+quiet <- function(x) {
+  sink(tempfile())
+  on.exit(sink())
+  invisible(force(x))
+}
 
 deviation_cv_corrected <- function(list_cv) {
   pred_errors <- purrr::map(cv_list, as_mapper(~ .x$Test_Data$Results_df$Pred_Error - median(.x$Test_Data$Results_df$Pred_Error)))
@@ -104,24 +104,26 @@ volume_func <- function(curr_sigma, alpha = 0.95, dims = 3) {
 }
 
 prepare_raw_counts <- function(exp_matrix) {
-  obj_dge <- DGEList(counts=as.matrix(exp_matrix))
-  keep <- filterByExpr(obj_dge)
+  check_pkg('edgeR', bioc = TRUE)
+  obj_dge <- edgeR::DGEList(counts=as.matrix(exp_matrix))
+  keep <- edgeR::filterByExpr(obj_dge)
   obj_dge <- obj_dge[keep, , keep.lib.sizes=FALSE]
   logCPM <- edgeR::cpm(obj_dge, log=TRUE, prior.count = 2)
   return(logCPM)
 }
 
 get_se_obj <- function(object) {
+  check_pkg('SummarizedExperiment', bioc = TRUE)
   counts_train <- object$Full_Original_Data
   counts_test <- object$Test_Data$Full_Test_Data
   common_names <- intersect(rownames(counts_train), rownames(counts_test))
-  meta_train <- object$Train_Data$Results_df %>% dplyr::select(c(Group, Group_2, Group_3, Replicate, time_1st_peak, Actual_Time, Theta)) %>% 
+  meta_train <- object$Train_Data$Results_df %>% dplyr::select(c(Group, Group_2, Group_3, Replicate, time_1st_peak, Actual_Time, Theta)) %>%
     dplyr::mutate(Dataset = 'Train')
-  meta_test <- object$Test_Data$Results_df %>% dplyr::select(c(Group_1, Group_2, Group_3, Replicate, time_1st_peak, Actual_Time, Theta)) %>% 
+  meta_test <- object$Test_Data$Results_df %>% dplyr::select(c(Group_1, Group_2, Group_3, Replicate, time_1st_peak, Actual_Time, Theta)) %>%
     dplyr::mutate(Group_1 = as.character(Group_1)) %>% dplyr::rename(Group = Group_1) %>% dplyr::mutate(Dataset = 'Test')
   combined_counts <- cbind(counts_train[common_names, ], counts_test[common_names, ])
   combined_meta <- rbind(meta_train, meta_test) %>% dplyr::mutate(across(where(is.character), ~na_if(., '')))
-  SEobj <- SummarizedExperiment(assays = list(normalised_counts = combined_counts),
+  SEobj <- SummarizedExperiment::SummarizedExperiment(assays = list(normalised_counts = combined_counts),
                                 colData = combined_meta)
   return(SEobj)
 }

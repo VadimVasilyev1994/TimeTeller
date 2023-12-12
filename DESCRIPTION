@@ -19,27 +19,29 @@ Imports:
     data.table,
     doParallel,
     dplyr,
-    edgeR,
     foreach,
     ggplot2,
     ggrepel,
-    gprofiler2,
     Matrix,
     mvtnorm,
+    parallel,
+    pkgndep,
     plotly,
     pracma,
     psych,
     purrr,
     Rfast,
     rgl,
-    rrcov,
     splines,
-    SummarizedExperiment,
     tibble,
     tidyr
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    SummarizedExperiment,
+    edgeR,
+    rrcov,
+    gprofiler2,
 VignetteBuilder: knitr
 URL: https://github.com/VadimVasilyev1994/circadianTT
 BugReports: https://github.com/VadimVasilyev1994/circadianTT/issues

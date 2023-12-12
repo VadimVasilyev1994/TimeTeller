@@ -21,7 +21,7 @@ make_data_object <- function(exp_matrix, genes, group_1, group_2, group_3, time,
   exp_df <- data.table::transpose(as.data.frame(exp_matrix[genes,]))
   colnames(exp_df) <- paste('Gene_', genes, sep='')
   full_df <- exp_df %>% dplyr::mutate(Group = as.character(group_1), Group_2 = as.character(group_2), Group_3 = as.character(group_3), Time = as.factor(time), Replicate = as.character(replicate))
-  full_df <- full_df %>% dplyr::mutate_at(c('Group','Group_2','Group_3','Replicate'), ~replace_na(.,""))
+  full_df <- full_df %>% dplyr::mutate_at(c('Group','Group_2','Group_3','Replicate'), ~tidyr::replace_na(.,""))
   cat('Please check the information provided:\n')
   cat(paste('# Number of genes used:',length(genes), ' (',paste(genes,collapse = ' '),')\n'))
   cat(paste('# Number of Group_1 levels:',length(unique(group_1)), ' (',paste(unique(group_1),collapse = ' '),')\n'))
@@ -42,7 +42,7 @@ make_data_object <- function(exp_matrix, genes, group_1, group_2, group_3, time,
 
 deal_with_replicates <- function(object, treat_independently = TRUE) {
   # Start with averaging the replicates if the user decided to
-  data <- object[['Train']][['Data']] 
+  data <- object[['Train']][['Data']]
   if (treat_independently) {
     cat('Replicates (if there are any) will be treated as independent observations for the training model\n')
     object[['Train']][['Data']] <- data
@@ -57,7 +57,7 @@ deal_with_replicates <- function(object, treat_independently = TRUE) {
         curr_group_2 <- counts_df[i,2]
         curr_group_3 <- counts_df[i,3]
         curr_time <- counts_df[i,4]
-        curr_df <- final_df %>% dplyr::filter(Group == curr_group, Group_2 == curr_group_2, Group_3 == curr_group_3, Time == curr_time) %>% dplyr::select(starts_with('Gene_')) 
+        curr_df <- final_df %>% dplyr::filter(Group == curr_group, Group_2 == curr_group_2, Group_3 == curr_group_3, Time == curr_time) %>% dplyr::select(starts_with('Gene_'))
         averaged_df <- curr_df %>% dplyr::summarise(across(.cols = everything(), mean)) %>% dplyr::mutate(Group = curr_group, Group_2 = curr_group_2, Group_3 = curr_group_3, Time = curr_time, Replicate = '')
         final_df <- final_df %>% dplyr::rows_delete(final_df %>% dplyr::filter(Group == curr_group, Group_2 == curr_group_2, Group_3 == curr_group_3, Time == curr_time)) %>% dplyr::rows_insert(averaged_df, conflict = 'ignore')
       }
@@ -75,7 +75,7 @@ deal_with_replicates <- function(object, treat_independently = TRUE) {
 allocate_timeseries_ind <- function(object, combine_for_norm = FALSE) {
   data <- object[['Train']][['Data']]
   data$Time_mod24 <- as.numeric(as.character(data$Time)) %% 24
-  
+
   if (combine_for_norm == TRUE) {
     data <- data %>% dplyr::group_by(Group, Group_2, Group_3) %>% dplyr::mutate(timeseries_name = factor(paste0(as.character(Group), as.character(Group_2), as.character(Group_3)))) %>%
       dplyr::mutate(timeseries_ind = as.numeric(timeseries_name))
@@ -83,7 +83,7 @@ allocate_timeseries_ind <- function(object, combine_for_norm = FALSE) {
     data <- data %>% dplyr::group_by(Group, Group_2, Group_3, Replicate) %>% dplyr::mutate(timeseries_name = factor(paste0(as.character(Group), as.character(Group_2), as.character(Group_3), as.character(Replicate)))) %>%
       dplyr::mutate(timeseries_ind = as.numeric(timeseries_name))
   }
-  
+
   object[['Train']][['Data']] <- data
   return(object)
 }
@@ -92,7 +92,7 @@ normalised_df <- function(object, method = 'intergene', grouping_vars = c('Group
   data <- object[['Train']][['Data']]
   genes <- colnames(data %>% ungroup() %>% dplyr::select(starts_with('Gene_')))
   object[['Normalisation_choice']] <- method
-  
+
   if(method == 'timecourse') {
     cat('Using timecourse normalisation\n')
     timeseries_norm_df <- data %>% dplyr::group_by(timeseries_ind) %>% dplyr::mutate(across(all_of(genes), .fns = list(normalised = ~(.x - mean(.x))/sd(.x)))) %>%
@@ -100,37 +100,37 @@ normalised_df <- function(object, method = 'intergene', grouping_vars = c('Group
     timeseries_norm_df <- timeseries_norm_df %>% dplyr::mutate(time_group = factor(paste('Time_', Time_mod24, sep = ''), levels = c(paste('Time_', sort(unique(timeseries_norm_df$Time_mod24)), sep = '')))) %>%
       dplyr::arrange(Time_mod24)
     object[['Train']][['Normalised_Data']] <- timeseries_norm_df
-    object[['Train']][['Normalised_Train_Exp_Data']] <- timeseries_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>% 
+    object[['Train']][['Normalised_Train_Exp_Data']] <- timeseries_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>%
       data.table::transpose() %>% as.matrix()
     return(object)
   }
-  
+
   else if(method == 'intergene'){
     cat('Using intergene normalisation\n')
-    intergene_norm_df <- data %>% dplyr::ungroup() %>% rowwise() %>% dplyr::mutate(mean = mean(c_across(genes)), sd = sd(c_across(genes))) %>% 
+    intergene_norm_df <- data %>% dplyr::ungroup() %>% rowwise() %>% dplyr::mutate(mean = mean(c_across(genes)), sd = sd(c_across(genes))) %>%
       dplyr::ungroup() %>% dplyr::mutate(across(all_of(genes), .fns = list(normalised = ~(.x - mean)/sd))) %>%
       dplyr::rename_at( vars( contains( "_normalised") ), list( ~paste("normalised", gsub("_normalised", "", .), sep = "_") ) )
     intergene_norm_df <- intergene_norm_df %>% dplyr::mutate(time_group = factor(paste('Time_', Time_mod24, sep = ''), levels = c(paste('Time_', sort(unique(intergene_norm_df$Time_mod24)), sep = '')))) %>%
       dplyr::arrange(Time_mod24)
     object[['Train']][['Normalised_Data']] <- intergene_norm_df
-    object[['Train']][['Normalised_Train_Exp_Data']] <- intergene_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>% 
+    object[['Train']][['Normalised_Train_Exp_Data']] <- intergene_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>%
       data.table::transpose() %>% as.matrix()
     return(object)
   }
-  
+
   else if(method == 'clr'){
     cat('Using clr normalisation\n')
-    clr_norm_df <- data %>% dplyr::ungroup() %>% rowwise() %>% dplyr::mutate(geom_mean = exp(mean(log(c_across(genes))))) %>% 
+    clr_norm_df <- data %>% dplyr::ungroup() %>% rowwise() %>% dplyr::mutate(geom_mean = exp(mean(log(c_across(genes))))) %>%
       dplyr::ungroup() %>% dplyr::mutate(across(all_of(genes), .fns = list(normalised = ~ (log(.x) - log(geom_mean))))) %>%
       dplyr::rename_at( vars( contains( "_normalised") ), list( ~paste("normalised", gsub("_normalised", "", .), sep = "_") ) )
     clr_norm_df <- clr_norm_df %>% dplyr::mutate(time_group = factor(paste('Time_', Time_mod24, sep = ''), levels = c(paste('Time_', sort(unique(clr_norm_df$Time_mod24)), sep = '')))) %>%
       dplyr::arrange(Time_mod24)
     object[['Train']][['Normalised_Data']] <- clr_norm_df
-    object[['Train']][['Normalised_Train_Exp_Data']] <- clr_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>% 
+    object[['Train']][['Normalised_Train_Exp_Data']] <- clr_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>%
       data.table::transpose() %>% as.matrix()
     return(object)
   }
-  
+
   else if(method == 'timecourse_matched'){
     cat('Using timecourse-matched normalisation. Pay attention to the group names used when testing\n')
     timeseries_norm_df <- data %>% dplyr::group_by(timeseries_ind) %>% dplyr::mutate(across(all_of(genes), .fns = list(normalised = ~(.x - mean(.x))/sd(.x)))) %>%
@@ -138,20 +138,20 @@ normalised_df <- function(object, method = 'intergene', grouping_vars = c('Group
     timeseries_norm_df <- timeseries_norm_df %>% dplyr::mutate(time_group = factor(paste('Time_', Time_mod24, sep = ''), levels = c(paste('Time_', sort(unique(timeseries_norm_df$Time_mod24)), sep = '')))) %>%
       dplyr::arrange(Time_mod24)
     object[['Train']][['Normalised_Data']] <- timeseries_norm_df
-    object[['Train']][['Normalised_Train_Exp_Data']] <- timeseries_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>% 
+    object[['Train']][['Normalised_Train_Exp_Data']] <- timeseries_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>%
       data.table::transpose() %>% as.matrix()
-    
-    group_statistics <- data %>% dplyr::group_by(across(all_of(grouping_vars))) %>% dplyr::select(all_of(genes)) %>% 
-      dplyr::summarise_all(list(Mean = mean,SD = sd)) %>% 
-      dplyr::rename_at( vars( contains( "Gene_") ), list( ~paste("", gsub("Gene_", "", .), sep = "") ) ) %>% 
-      tidyr::unite('timeseries_matched_name', all_of(grouping_vars), remove = FALSE, sep = '|') %>% 
+
+    group_statistics <- data %>% dplyr::group_by(across(all_of(grouping_vars))) %>% dplyr::select(all_of(genes)) %>%
+      dplyr::summarise_all(list(Mean = mean,SD = sd)) %>%
+      dplyr::rename_at( vars( contains( "Gene_") ), list( ~paste("", gsub("Gene_", "", .), sep = "") ) ) %>%
+      tidyr::unite('timeseries_matched_name', all_of(grouping_vars), remove = FALSE, sep = '|') %>%
       tibble::column_to_rownames(var = 'timeseries_matched_name')
     group_metrics_list <- sapply(c("Mean", "SD"), function(x) group_statistics[endsWith(names(group_statistics),x)], simplify = FALSE)
     object[['Train']][['Gene_Per_Group_Info']] <- group_metrics_list
     return(object)
   }
-  
-} 
+
+}
 
 get_projections <- function(object, num_PC) {
   data <- object[['Train']][['Normalised_Data']]
@@ -200,13 +200,14 @@ get_mvn_original_data <- function(object, cov_estimate = 'normal', alpha_par = 0
       likeli_array_original[,,i] <- mat_final
     }
     if (cov_estimate == 'robust') {
+      check_pkg("rrcov")
       data.mvnorm <- lapply(data.split, function(x) rrcov::CovMcd(as.matrix(x), alpha = alpha_par, nsamp = 'deterministic'))
       mat <- purrr::map(data.mvnorm, extract_elements_func_robust)
       mat_final <- base::matrix(unlist(mat), nrow = num_PC + num_PC^2)
       likeli_array_original[,,i] <- mat_final
     }
   }
-  
+
   object[['Projections']][['Fitted_MVN_Original']] <- likeli_array_original
   return(object)
 }
@@ -225,25 +226,25 @@ get_mvn_interpolated <- function(object, num_interp_points = 144, interp_method 
       for (i in 1:dims_array[1]) {
         ts_to_interpolate <- likelihood_array[i,,j]
         ts_to_interpolate_periodic <- c(ts_to_interpolate, ts_to_interpolate[1])
-        
+
         if (interp_method == 'perpchip') {
           interpolated_array[i,,j] <- perpchip(times_periodic, ts_to_interpolate_periodic, seq(min(times_periodic), max(times_periodic), length.out = num_interp_points))
         }
         if (interp_method == 'standard') {
-          interpolated_array[i,,j] <- stats::spline(times_periodic, ts_to_interpolate_periodic, n = num_interp_points, method = "periodic")$y  
+          interpolated_array[i,,j] <- stats::spline(times_periodic, ts_to_interpolate_periodic, n = num_interp_points, method = "periodic")$y
         }
-        
+
       }
     }
     dimnames(interpolated_array) <- list(dimnames(likelihood_array)[[1]], paste0('Time_',round(seq(min(times_periodic), max(times_periodic), length.out = num_interp_points),2)), dimnames(likelihood_array)[[3]])
     object[['Projections']][['Fitted_MVN_Interpolated']] <- interpolated_array
     return(object)
   }
-  
-  
+
+
   if (cov_path == 'fisherrao') {
     for (j in 1:dims_array[3]) {
-      
+
       num_points <- num_interp_points + dims_array[3]
       times_num <- as.numeric(substring(colnames(likelihood_array), first = 6))
       interpolation_points <- c()
@@ -255,14 +256,14 @@ get_mvn_interpolated <- function(object, num_interp_points = 144, interp_method 
         cov_mat_1 <- matrix(likelihood_array[(numPC+1):(numPC+numPC^2),i,j], nrow = 3)
         cov_mat_2 <- matrix(likelihood_array[(numPC+1):(numPC+numPC^2),ifelse(i+1>length(times_num),1,i+1),j], nrow = 3)
         interp_points <- seq(0, 1, length.out = interpolation_points[i])
-        
+
         mat_list <- matrix(NA, nrow = numPC^2, ncol = length(interp_points))
         for (k in 1:length(interp_points)) {
           first_term <- pracma::sqrtm(cov_mat_1)$B
           second_term <- solve(pracma::sqrtm(cov_mat_1)$B) %*% cov_mat_2 %*% solve(pracma::sqrtm(cov_mat_1)$B)
           second_term <- expm(logm(second_term) * interp_points[k])
           third_term <- pracma::sqrtm(cov_mat_1)$B
-          
+
           interp_mat <- first_term %*% second_term %*% third_term
           mat_list[,k] <- as.vector(interp_mat)
         }
@@ -271,32 +272,32 @@ get_mvn_interpolated <- function(object, num_interp_points = 144, interp_method 
         if (i>1) {mat_list <- mat_list[,-1]}
         interp_res[[i]] <- mat_list
       }
-      
+
       check <- do.call(cbind,interp_res)
       check <- check[, !duplicated(colnames(check))]
       interpolated_array <- interpolated_array[ , 1:dim(check)[2], ]
       interpolated_array[(numPC+1):(numPC+numPC^2), ,j] <- check
-      
-      
+
+
       for (i in 1:numPC) {
         ts_to_interpolate <- likelihood_array[i,,j]
         ts_to_interpolate_periodic <- c(ts_to_interpolate, ts_to_interpolate[1])
-        
+
         if (interp_method == 'perpchip') {
           interpolated_array[i,,j] <- perpchip(times_periodic, ts_to_interpolate_periodic, seq(min(times_periodic), max(times_periodic), length.out = dim(check)[2]))
         }
         if (interp_method == 'standard') {
-          interpolated_array[i,,j] <- stats::spline(times_periodic, ts_to_interpolate_periodic, n = dim(check)[2], method = "periodic")$y  
+          interpolated_array[i,,j] <- stats::spline(times_periodic, ts_to_interpolate_periodic, n = dim(check)[2], method = "periodic")$y
         }
-        
+
       }
-      
+
       dimnames(interpolated_array)[[2]] <- colnames(check)
-      
+
     }
     dimnames(interpolated_array) <- list(dimnames(likelihood_array)[[1]], dimnames(interpolated_array)[[2]], dimnames(likelihood_array)[[3]])
-    
-    
+
+
     object[['Projections']][['Fitted_MVN_Interpolated']] <- interpolated_array
     return(object)
   }
@@ -320,7 +321,7 @@ calc_train_likelis <- function(object) {
         } else {
           sigma_used <- curr_sigma
         }
-        
+
         vec[j] <- mvtnorm::dmvnorm(project_exp_mat[,ind_num], mean = fitted_mvn_data[1:num_PC,j,i], sigma = sigma_used, checkSymmetry = FALSE)
       }
       train_likelihood_array[,ind_num,i] <- vec
@@ -356,10 +357,10 @@ theta_calc_train <- function(object, epsilon = 0.4, eta = 0.35) {
     curr_sample <- exp(averaged_likelis_rescaled[i,])
     curr_lrf_curve <- curr_sample / max(curr_sample)
     curr_curve <- suppressWarnings(eta*(1 + epsilon + cos(2*pi*((1:num_points)/num_points - which(curr_lrf_curve == max(curr_lrf_curve))/num_points))))
-    
+
     lrf_curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_lrf_curve, period = num_points),seq(1,num_points,length.out = 1000))
     curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_curve, period = num_points),seq(1,num_points,length.out = 1000))
-    
+
     thetas[i] <- sum(lrf_curve_spline$y > curve_spline$y) / length(lrf_curve_spline$y)
   }
   object[['Train_Data']][['Thetas_Train']] <- thetas
@@ -380,12 +381,12 @@ calc_flat_theta_contrib_train <- function(object) {
     ind_ts <- exp(averaged_likelis_rescaled[i,])
     ind_ts <- shift_ts(ind_ts, round(num_points/2))
     ind_lrf_curve <- ind_ts / max(ind_ts)
-    
+
     curr_curve <- suppressWarnings(eta*(1 + epsilon + cos(2*pi*((1:num_points)/num_points - which(ind_lrf_curve == max(ind_lrf_curve))/num_points))))
     lrf_curve_spline <- stats::predict(periodicSpline(1:num_points,ind_lrf_curve, period = num_points),seq(1,num_points,length.out = 1000))
     curve_spline <- stats::predict(periodicSpline(1:num_points,curr_curve, period = num_points),seq(1,num_points,length.out = 1000))
-    
-    theta_index <- which(lrf_curve_spline$y > curve_spline$y) 
+
+    theta_index <- which(lrf_curve_spline$y > curve_spline$y)
     flat_regions <- which(abs(diff(lrf_curve_spline$y)) < 1e-4)
     flat_contribution[i] <- sum(theta_index %in% flat_regions) / length(theta_index) * 100
   }
@@ -419,27 +420,27 @@ second_peaks_fun_train <- function(object, minpeakheight = -Inf, minpeakdistance
   peaks_df <- data.frame(npeaks = npeaks, time_1st_peak = round(times_1st_peak,2), time_2nd_peak = round(times_2nd_peak,2),
                          max_1st_peak = round(log_likeli_1st_peak,3), max_2nd_peak = round(log_likeli_2nd_peak,3))
   peaks_df <- peaks_df %>% dplyr::mutate(times_diff = time_1st_peak - time_2nd_peak, max_diff = max_1st_peak - max_2nd_peak)
-  
+
   percent_flat <- function(likelis, thresh) {
     out <- round(sum(likelis == thresh) / npoints * 100,1)
     return(out)
   }
-  
+
   peaks_df$PercFlat <- apply(averaged_likelis,2,percent_flat, logthresh)
   peaks_df$FlatContrib <- flat_contributions_df$flat_contributions
   peaks_df$Theta <- flat_contributions_df$thetas
-  
+
   # Looking at original projections before truncation
   local_max_vals <- apply(likelis_array, c(2,3), max)
-  peaks_df <- peaks_df %>% dplyr::mutate(local_smallest_peak = round(apply(local_max_vals,1,min),3), local_biggest_peak = round(apply(local_max_vals,1,max),3), 
+  peaks_df <- peaks_df %>% dplyr::mutate(local_smallest_peak = round(apply(local_max_vals,1,min),3), local_biggest_peak = round(apply(local_max_vals,1,max),3),
                                          local_mean = round(apply(local_max_vals,1,mean),3), local_sd = round(apply(local_max_vals,1,sd),3))
-  
+
   local_times <- (apply(likelis_array, c(2,3), which.max) / npoints * 24 + object[['Metadata']][['Train']][['min_T_mod24']]) %% 24
   time_weights <- t(apply(local_max_vals, 1, function(x)(x-min(x))/(max(x)-min(x))))
-  
+
   # Weighted average time prediction using max likelihoods values
   weighted_times_vec <- apply(sweep(local_times*time_weights, 1, apply(time_weights,1,sum), '/'),1,sum)
-  
+
   local_times_rad <- local_times / 24 * 2 * pi
   mean_local_times <- (24 + suppressWarnings(apply(local_times_rad, 1, circular::mean.circular)) * 24 / 2 / pi) %% 24
   sd_local_times <- suppressWarnings(apply(local_times_rad, 1, circular::meandeviation)) * 24 / 2 / pi
@@ -447,15 +448,15 @@ second_peaks_fun_train <- function(object, minpeakheight = -Inf, minpeakdistance
                                          min_time_pred = round(apply(local_times,1,min),2), max_time_pred = round(apply(local_times,1,max),2),
                                          weighted_mean_time_pred = round(weighted_times_vec,2)) %>%
     dplyr::mutate(time_pred_diff = time_1st_peak - weighted_mean_time_pred)
-  
+
   peaks_df$Actual_Time <- object$Train$Normalised_Data$Time_mod24
   peaks_df$Pred_Error <- circular_difference(peaks_df$time_1st_peak, peaks_df$Actual_Time)
   peaks_df$Group <- object$Train$Normalised_Data$Group
   peaks_df$Group_2 <- object$Train$Normalised_Data$Group_2
   peaks_df$Group_3 <- object$Train$Normalised_Data$Group_3
   peaks_df$Replicate <- object$Train$Normalised_Data$Replicate
-  
+
   object[['Train_Data']][['Results_df']] <- peaks_df
-  
+
   return(object)
 }

@@ -421,6 +421,7 @@ plot_deviation_cv_original <- function(list_cv) {
 
 display_rhythmicity_results <- function(object, probes_of_interest, info_used = 'ranks', organism) {
   if(missing(probes_of_interest)) probes_of_interest <- c()
+  check_pkg('gprofiler2', bioc = FALSE)
   if (info_used == 'ranks') {
 
     if(is.null(suppressMessages(gprofiler2::gconvert(rownames(object$Rhythmicity_Results), organism = organism, target = 'ENTREZGENE', mthreshold = 1, filter_na = FALSE)$target))) {Names <- rownames(object$Rhythmicity_Results)}
@@ -721,7 +722,7 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
     for (i in 1:length(rownames(data))) {
       curr_gene <- rownames(data)[i]
       expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec))
-      expression_df <- expression_df %>% pivot_wider(names_from = Time, values_from = Expression) %>%
+      expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>%
         tibble::column_to_rownames('Group')
       times <- as.numeric(colnames(expression_df))
       pop_cosinor <- quiet(population.cosinor.lm(expression_df, times, period = 24, plot = FALSE))

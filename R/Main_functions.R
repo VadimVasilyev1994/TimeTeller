@@ -35,11 +35,13 @@
 #'
 #' @author Vadim Vasilyev
 #'
+#' @importFrom pkgndep check_pkg
 #' @import dplyr
 #' @import purrr
 #' @import tibble
-#' @importFrom tidyr unite pivot_longer
+#' @importFrom tidyr unite pivot_longer pivot_wider replace_na
 #' @import ggplot2
+#' @import parallel
 #' @import foreach
 #' @import doParallel
 #' @importFrom pracma findpeaks
@@ -54,24 +56,21 @@
 #' @import grDevices
 #' @import graphics
 #' @import Matrix
-#' @import edgeR
-#' @import SummarizedExperiment
 #' @import circular
-#' @import gprofiler2
 #' @importFrom data.table transpose
 #' @import ggrepel
 #' @import mvtnorm
 #' @import psych
-#' @import rrcov
 #'
 #'
 #' @return Returned is the rich object of class \code{list} containing the TimeTeller model for further analysis
 #' @export
 #'
 #' @examples
-#' load(bjarn_data)
-#' tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time, log_thresh = -5)
-#' tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time, method = 'timecourse', parallel_comp = TRUE, log_thresh = -5)
+#' library("circadianTT")
+#' tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used,
+#'                         group_1 = bjarn_data$group, time = bjarn_data$time, log_thresh = -5)
+
 train_model <- function(exp_matrix, genes, group_1, group_2, group_3, time, replicate, mat_normalised = TRUE,
                         treat_independently = TRUE, combine_for_norm = FALSE, parallel_comp = FALSE, cores = 4,
                         method = 'intergene', grouping_vars = c('Group'), num_PC = 3, log_thresh, epsilon = 0.4, eta = 0.35,

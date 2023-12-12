@@ -102,9 +102,9 @@ Returned is the rich object of class \code{list} containing the TimeTeller model
 Trains the model using provided expression matrix and metadata.
 }
 \examples{
-load(bjarn_data)
-train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time)
-train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time, method = 'timecourse', parallel_comp = TRUE)
+library("circadianTT")
+tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used,
+                        group_1 = bjarn_data$group, time = bjarn_data$time, log_thresh = -5)
 }
 \author{
 Vadim Vasilyev
