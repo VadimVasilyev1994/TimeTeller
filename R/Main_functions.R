@@ -1,7 +1,7 @@
 #' Train the TimeTeller model
 #'
-#' Trains the model using provided expression matrix and metadata. 
-#' 
+#' Trains the model using provided expression matrix and metadata.
+#'
 #' @param exp_matrix Matrix or data frame with features in rows and samples in columns
 #' @param genes genes used to construct the timeteller model
 #' @param group_1 vector containing metadata for each sample (eg individual, organ)
@@ -31,13 +31,13 @@
 #' @param ndowns this is used internally with \code{pracma} package to locate peaks. No reason to change, however included for future testing / development
 #' @param threshold this is used internally with \code{pracma} package to locate peaks. No reason to change, however included for future testing / development
 #' @param npeaks this is used internally with \code{pracma} package to locate peaks. No reason to change, however included for future testing / development
-#' 
-#' 
+#'
+#'
 #' @author Vadim Vasilyev
-#' 
+#'
 #' @import dplyr
 #' @import purrr
-#' @import tibble 
+#' @import tibble
 #' @importFrom tidyr unite pivot_longer
 #' @import ggplot2
 #' @import foreach
@@ -63,23 +63,23 @@
 #' @import mvtnorm
 #' @import psych
 #' @import rrcov
-#' 
-#' 
+#'
+#'
 #' @return Returned is the rich object of class \code{list} containing the TimeTeller model for further analysis
 #' @export
-#' 
+#'
 #' @examples
 #' load(bjarn_data)
-#' train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time)
-#' train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time, method = 'timecourse', parallel_comp = TRUE)
+#' tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time, log_thresh = -5)
+#' tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used, group_1 = bjarn_data$group, time = bjarn_data$time, method = 'timecourse', parallel_comp = TRUE, log_thresh = -5)
 train_model <- function(exp_matrix, genes, group_1, group_2, group_3, time, replicate, mat_normalised = TRUE,
-                        treat_independently = TRUE, combine_for_norm = FALSE, parallel_comp = FALSE, cores = 4, 
-                        method = 'intergene', grouping_vars = c('Group'), num_PC = 3, log_thresh, epsilon = 0.4, eta = 0.35, 
+                        treat_independently = TRUE, combine_for_norm = FALSE, parallel_comp = FALSE, cores = 4,
+                        method = 'intergene', grouping_vars = c('Group'), num_PC = 3, log_thresh, epsilon = 0.4, eta = 0.35,
                         cov_estimate = 'normal', alpha_par = 0.75, num_interp_points = 144, interp_method = 'perpchip', cov_path = 'spline',
                         minpeakheight = -Inf, minpeakdistance = 1, nups = 1, ndowns = 0, threshold = 0, npeaks = 2) {
   if(parallel_comp) {
     my.cluster <- parallel::makeCluster(
-      cores, 
+      cores,
       type = "PSOCK"
     )
     doParallel::registerDoParallel(cl = my.cluster)
@@ -98,7 +98,7 @@ train_model <- function(exp_matrix, genes, group_1, group_2, group_3, time, repl
   if(parallel_comp) {
     object <- calc_train_likelis_dev(object)
   } else {
-    object <- calc_train_likelis(object) 
+    object <- calc_train_likelis(object)
   }
   object <- get_final_likelis_train(object, log_thresh = log_thresh)
   if(parallel_comp) {
@@ -120,9 +120,9 @@ train_model <- function(exp_matrix, genes, group_1, group_2, group_3, time, repl
   return(object)
 }
 
-train_cv <- function(group_to_leave_out = 'group_1', genes, exp_matrix, test_grouping_vars, group_1, group_2, group_3, time, replicate, mat_normalised = TRUE, 
-                     treat_independently = TRUE, combine_for_norm = FALSE, parallel_comp = FALSE, cores = 4, 
-                     method = 'intergene', grouping_vars = c('Group'), num_PC = 3, log_thresh, epsilon = 0.4, eta = 0.35, 
+train_cv <- function(group_to_leave_out = 'group_1', genes, exp_matrix, test_grouping_vars, group_1, group_2, group_3, time, replicate, mat_normalised = TRUE,
+                     treat_independently = TRUE, combine_for_norm = FALSE, parallel_comp = FALSE, cores = 4,
+                     method = 'intergene', grouping_vars = c('Group'), num_PC = 3, log_thresh, epsilon = 0.4, eta = 0.35,
                      cov_estimate = 'normal', alpha_par = 0.75, num_interp_points = 144, interp_method = 'perpchip', cov_path = 'spline',
                      minpeakheight = -Inf, minpeakdistance = 1, nups = 1, ndowns = 0, threshold = 0, npeaks = 2) {
   if (missing(group_2)) {group_2 <- as.character(rep(NA, length(group_1)))}
@@ -141,19 +141,19 @@ train_cv <- function(group_to_leave_out = 'group_1', genes, exp_matrix, test_gro
     } else {
       ind_enough_times <- 1:dim(exp_matrix[,ind_train])[2]
     }
-    trained_model <- suppressMessages(quiet(train_model(exp_matrix = exp_matrix[,ind_train][,ind_enough_times], genes = genes, 
-                                                        group_1 = group_1[ind_train][ind_enough_times], group_2 = group_2[ind_train][ind_enough_times], group_3 = group_3[ind_train][ind_enough_times], 
-                                                        time = time[ind_train][ind_enough_times], replicate = replicate[ind_train][ind_enough_times], mat_normalised = mat_normalised, 
-                                                        treat_independently = treat_independently, combine_for_norm = combine_for_norm, parallel_comp = parallel_comp, cores = cores, 
-                                                        method = method, grouping_vars = grouping_vars, num_PC = num_PC, log_thresh = log_thresh, epsilon = epsilon, eta = eta, 
+    trained_model <- suppressMessages(quiet(train_model(exp_matrix = exp_matrix[,ind_train][,ind_enough_times], genes = genes,
+                                                        group_1 = group_1[ind_train][ind_enough_times], group_2 = group_2[ind_train][ind_enough_times], group_3 = group_3[ind_train][ind_enough_times],
+                                                        time = time[ind_train][ind_enough_times], replicate = replicate[ind_train][ind_enough_times], mat_normalised = mat_normalised,
+                                                        treat_independently = treat_independently, combine_for_norm = combine_for_norm, parallel_comp = parallel_comp, cores = cores,
+                                                        method = method, grouping_vars = grouping_vars, num_PC = num_PC, log_thresh = log_thresh, epsilon = epsilon, eta = eta,
                                                         cov_estimate = cov_estimate, alpha_par = alpha_par, num_interp_points = num_interp_points, interp_method = interp_method, cov_path = cov_path,
                                                         minpeakheight = minpeakheight, minpeakdistance = minpeakdistance, nups = nups, ndowns = ndowns, threshold = threshold, npeaks = npeaks)))
-    
+
     ind_test <- which(group_cv %in% groupcv[i])
-    cv_res[[i]] <- suppressMessages(quiet(test_model(trained_model, exp_matrix = exp_matrix[,ind_test], test_grouping_vars = test_grouping_vars, 
-                                                     test_group_1 = group_1[ind_test], test_group_2 = group_2[ind_test], test_group_3 = group_3[ind_test], 
+    cv_res[[i]] <- suppressMessages(quiet(test_model(trained_model, exp_matrix = exp_matrix[,ind_test], test_grouping_vars = test_grouping_vars,
+                                                     test_group_1 = group_1[ind_test], test_group_2 = group_2[ind_test], test_group_3 = group_3[ind_test],
                                                      test_time = time[ind_test], test_replicate = replicate[ind_test], mat_normalised_test = mat_normalised, log_thresh = log_thresh,
-                                                     parallel_comp = parallel_comp, cores = cores, 
+                                                     parallel_comp = parallel_comp, cores = cores,
                                                      minpeakheight = minpeakheight, minpeakdistance = minpeakdistance, nups = nups, ndowns = ndowns, threshold = threshold, npeaks = npeaks)))
     message('Finished ',groupcv[i])
   }
@@ -164,9 +164,9 @@ train_cv <- function(group_to_leave_out = 'group_1', genes, exp_matrix, test_gro
 
 #' Project test data on the training model
 #'
-#' Projects the test data onto the model obtained after running \code{train_model} function. 
-#' Among the outputs are the estimated time for each sample and the clock dysfunction metric (Theta)  
-#' 
+#' Projects the test data onto the model obtained after running \code{train_model} function.
+#' Among the outputs are the estimated time for each sample and the clock dysfunction metric (Theta)
+#'
 #' @param object object of class list containing timeteller training model (obtained after running \code{train_model} function)
 #' @param exp_matrix matrix or data frame containing test data with features in rows and samples in columns
 #' @param test_grouping_vars groups below that will be used for \code{timecourse_matched} normalisation. See the \code{vignette} for examples
@@ -185,20 +185,20 @@ train_cv <- function(group_to_leave_out = 'group_1', genes, exp_matrix, test_gro
 #' @param ndowns this is used internally with \code{pracma} package to locate peaks. No reason to change, however included for future testing / development
 #' @param threshold this is used internally with \code{pracma} package to locate peaks. No reason to change, however included for future testing / development
 #' @param npeaks this is used internally with \code{pracma} package to locate peaks. No reason to change, however included for future testing / development
-#' 
-#' 
+#'
+#'
 #' @author Vadim Vasilyev
-#' 
-#' 
-#' @return Returned is the rich object of class \code{list} containing the results for both train and test models. 
+#'
+#'
+#' @return Returned is the rich object of class \code{list} containing the results for both train and test models.
 #' @export
-#' 
+#'
 
 test_model <- function(object, exp_matrix, test_grouping_vars, test_group_1, test_group_2, test_group_3, test_replicate, test_time, mat_normalised_test = TRUE,
                        log_thresh, parallel_comp = FALSE, cores = 4, minpeakheight = -Inf, minpeakdistance = 1, nups = 1, ndowns = 0, threshold = 0, npeaks = 2) {
   if(parallel_comp) {
     my.cluster <- parallel::makeCluster(
-      cores, 
+      cores,
       type = "PSOCK"
     )
     doParallel::registerDoParallel(cl = my.cluster)

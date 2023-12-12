@@ -549,6 +549,21 @@ choose_logthresh <- function(object, max_log = 0, min_log = -12, by_step = -1, t
 
 }
 
+#' Log Threshold selection plot
+#'
+#' Plots the results of \code{choose_logthresh} function
+#'
+#' @param choose_logthresh_df \code{data.frame} containing the output of \code{choose_logthresh} function
+#' @param cap parameter used for visualisation mainly. Ratio of LogLik for 1st and 2nd peaks
+#' @param perc_flat option to target a particular proportion of samples with flat likelihoods (ie their peak is below the currently selected LogThresh)
+#'
+#' @author Vadim Vasilyev
+#'
+#'
+#' @return returns \code{ggplot} object
+#' @export
+#'
+
 choose_logthresh_plot <- function(choose_logthresh_df, cap = 10, perc_flat = 0.02) {
   results_df <- choose_logthresh_df
 
