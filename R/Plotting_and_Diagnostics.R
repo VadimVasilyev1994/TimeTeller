@@ -807,11 +807,11 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
 
 #' Covariance matrix ellipsoid volume
 #'
-#' This displays the volume (area) of the hyper-ellipse at a given confidence level (\url{https://datavis.ca/papers/ellipses.pdf}). Can be useful for diagnostics and further analysis of covariance matrix interpolation
+#' This displays the volume (area) of the hyper-ellipse at a given confidence level (\url{https://datavis.ca/papers/ellipses.pdf}). Can be useful for diagnostics and further analysis of the covariance matrix interpolation
 #'
 #' @param object list containing circadianTT training and test models following \code{train_model}
-#' @param alpha confidence level
-#' #'
+#' @param alpha confidence level used for volume calculation
+#'
 #' @author Vadim Vasilyev
 #'
 #'
