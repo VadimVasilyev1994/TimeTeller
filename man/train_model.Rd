@@ -39,7 +39,7 @@ train_model(
 \arguments{
 \item{exp_matrix}{Matrix or data frame with features in rows and samples in columns}
 
-\item{genes}{Genes used to construct the timeteller model}
+\item{genes}{genes used to construct the timeteller model}
 
 \item{group_1}{vector containing metadata for each sample (eg individual, organ)}
 

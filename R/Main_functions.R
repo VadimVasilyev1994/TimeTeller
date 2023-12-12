@@ -3,7 +3,7 @@
 #' Trains the model using provided expression matrix and metadata. 
 #' 
 #' @param exp_matrix Matrix or data frame with features in rows and samples in columns
-#' @param genes Genes used to construct the timeteller model
+#' @param genes genes used to construct the timeteller model
 #' @param group_1 vector containing metadata for each sample (eg individual, organ)
 #' @param group_2 vector containing metadata for each sample (eg individual, organ). Leave empty if unavailable
 #' @param group_3 vector containing metadata for each sample (eg individual, organ). Leave empty if unavailable
@@ -38,7 +38,7 @@
 #' @import dplyr
 #' @import purrr
 #' @import tibble 
-#' @import tidyr
+#' @importFrom tidyr unite pivot_longer
 #' @import ggplot2
 #' @import foreach
 #' @import doParallel
@@ -48,7 +48,7 @@
 #' @import rgl
 #' @import plotly
 #' @import cosinor2
-#' @import Rfast
+#' @importFrom Rfast mvnorm.mle
 #' @import utils
 #' @import stats
 #' @import grDevices
@@ -58,7 +58,7 @@
 #' @import SummarizedExperiment
 #' @import circular
 #' @import gprofiler2
-#' @import data.table
+#' @importFrom data.table transpose
 #' @import ggrepel
 #' @import mvtnorm
 #' @import psych

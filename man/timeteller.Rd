@@ -8,6 +8,14 @@
 \description{
 Set of tools and visualisations for interrogating the circadian clock
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/VadimVasilyev1994/circadianTT}
+  \item Report bugs at \url{https://github.com/VadimVasilyev1994/circadianTT/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: First Last \email{first.last@example.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 
