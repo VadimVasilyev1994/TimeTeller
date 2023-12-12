@@ -106,6 +106,9 @@ library("circadianTT")
 tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used,
                         group_1 = bjarn_data$group, time = bjarn_data$time, log_thresh = -5)
 }
+\references{
+Amari, S.I. and Nagaoka, H., 2000. Methods of information geometry (Vol. 191). American Mathematical Soc..
+}
 \author{
 Vadim Vasilyev
 }

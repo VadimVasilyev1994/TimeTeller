@@ -473,7 +473,7 @@ display_rhythmicity_results <- function(object, probes_of_interest, info_used = 
 #' @param max_log max value of logthresh to be considered. Generally recommended to check \code{[0,-12]} range
 #' @param min_log min value of logthresh to be considered
 #' @param by_step step size for logthresh optimisation. We have found -0.5 to be sufficient, however users may benefit from more granular data depending on the application
-#' @param train_or_test whether the simulation be run on \code{'train'} or \code{'test'} data
+#' @param train_or_test whether the simulation should be run on \code{'train'} or \code{'test'} data
 #'
 #'
 #' @author Vadim Vasilyev
@@ -555,7 +555,7 @@ choose_logthresh <- function(object, max_log = 0, min_log = -12, by_step = -1, t
 #' Plots the results of \code{choose_logthresh} function
 #'
 #' @param choose_logthresh_df \code{data.frame} containing the output of \code{choose_logthresh} function
-#' @param cap parameter used for visualisation mainly. Ratio of LogLik for 1st and 2nd peaks
+#' @param cap parameter used for clarity of visualisation. Ratio of LogLik for 1st and 2nd peaks
 #' @param perc_flat option to target a particular proportion of samples with flat likelihoods (ie their peak is below the currently selected LogThresh)
 #'
 #' @author Vadim Vasilyev
@@ -594,6 +594,23 @@ choose_logthresh_plot <- function(choose_logthresh_df, cap = 10, perc_flat = 0.0
   return(p1)
 }
 
+#' Likelihoods of individual samples
+#'
+#' This displays likelihoods (for all the local projections) for individual samples. Can be useful for diagnostics and troubleshooting the model
+#'
+#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param sample_num number of sample to be displayed
+#' @param logthresh which log threshold should be used for visualisation
+#' @param train_or_test is the sample coming from \code{train} or \code{test} data
+#'
+#'
+#' @author Vadim Vasilyev
+#'
+#'
+#' @return Returns a plot of likelihood curves produced using \code{graphics::matplot}
+#' @export
+#'
+
 plot_raw_likelis <- function(object, sample_num, logthresh, train_or_test = 'test') {
   if (train_or_test == 'test') {likelis_array <- object[['Test_Data']][['Test_Likelihood_Array']]}
   else if (train_or_test == 'train') {likelis_array <- object[['Train_Data']][['Train_Likelihood_Array']]}
@@ -609,6 +626,23 @@ plot_raw_likelis <- function(object, sample_num, logthresh, train_or_test = 'tes
   matlines(1:dim(likeli_mat_adjusted)[1]/dim(likeli_mat_adjusted)[1]*24, averaged_likeli, type = "l", lty = 1, col = 'black', lwd = 3)
   par(opar)
 }
+
+#' Theta calculation of individual samples
+#'
+#' This displays \code{theta} and flat likelihood percentage calculation for individual samples. Can be useful for diagnostics and troubleshooting the model
+#'
+#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param sample_num number of sample to be displayed
+#' @param logthresh which log threshold should be used for visualisation
+#' @param train_or_test is the sample coming from \code{train} or \code{test} data
+#'
+#'
+#' @author Vadim Vasilyev
+#'
+#'
+#' @return Returns plots of theta calculation curves produced using standard \code{graphics::plot}
+#' @export
+#'
 
 plot_ind_curve <- function(object, sample_num, logthresh, train_or_test = 'test') {
   epsilon <- object[['Train_Data']][['epsilon']]
@@ -658,7 +692,27 @@ plot_ind_curve <- function(object, sample_num, logthresh, train_or_test = 'test'
 
 }
 
-choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'population', parallel = TRUE, cores = 6){
+#' Rhythmicity analysis of training data
+#'
+#' Calculates rhythmicity results for the training data
+#'
+#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param grouping_var how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: \code{'Group_1'}, \code{'Group_2'}, \code{'Group_3'} or \code{'Replicate'}
+#' @param method method used for rhythmicity analysis. Default is \code{'population'} as in \url{https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16}
+#' @param parallel if TRUE, parallel computation using \code{foreach} and \code{doParallel} packages will be used. Default is TRUE
+#' @param cores if using parallel computation, how many cores should be used. Default is 4
+#'
+#' @author Vadim Vasilyev
+#'
+#' @references
+#'
+#' Cornelissen, G., 2014. Cosinor-based rhythmometry. Theoretical Biology and Medical Modelling, 11(1), pp.1-24.
+#'
+#' @return Returns plots of theta calculation curves produced using standard \code{graphics::plot}
+#' @export
+#'
+
+choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'population', parallel = TRUE, cores = 4){
   message(paste0('Selection will be done using ', ifelse(length(grouping_var) > 1, 'Manual',grouping_var)))
   data <- object[['Full_Original_Data']]
   time_vec <- object[['Metadata']][['Train']][['Time']]
@@ -750,6 +804,20 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
   }
   parallel::stopCluster(cl = my.cluster)
 }
+
+#' Covariance matrix ellipsoid volume
+#'
+#' This displays the volume (area) of the hyper-ellipse at a given confidence level (\url{https://datavis.ca/papers/ellipses.pdf}). Can be useful for diagnostics and further analysis of covariance matrix interpolation
+#'
+#' @param object list containing circadianTT training and test models following \code{train_model}
+#' @param alpha confidence level
+#' #'
+#' @author Vadim Vasilyev
+#'
+#'
+#' @return Returns the plot of volume of hyper-ellipse for all the local projections using \code{graphics::matplot}
+#' @export
+#'
 
 check_cov_interp <- function(object, alpha = 0.95) {
   dims <- object$PC_Num

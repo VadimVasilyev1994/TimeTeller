@@ -21,7 +21,7 @@ choose_logthresh(
 
 \item{by_step}{step size for logthresh optimisation. We have found -0.5 to be sufficient, however users may benefit from more granular data depending on the application}
 
-\item{train_or_test}{whether the simulation be run on \code{'train'} or \code{'test'} data}
+\item{train_or_test}{whether the simulation should be run on \code{'train'} or \code{'test'} data}
 }
 \value{
 returns \code{data.frame} containing the results of log threshold selection

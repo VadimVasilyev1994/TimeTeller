@@ -9,7 +9,7 @@ choose_logthresh_plot(choose_logthresh_df, cap = 10, perc_flat = 0.02)
 \arguments{
 \item{choose_logthresh_df}{\code{data.frame} containing the output of \code{choose_logthresh} function}
 
-\item{cap}{parameter used for visualisation mainly. Ratio of LogLik for 1st and 2nd peaks}
+\item{cap}{parameter used for clarity of visualisation. Ratio of LogLik for 1st and 2nd peaks}
 
 \item{perc_flat}{option to target a particular proportion of samples with flat likelihoods (ie their peak is below the currently selected LogThresh)}
 }

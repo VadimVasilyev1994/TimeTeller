@@ -35,6 +35,10 @@
 #'
 #' @author Vadim Vasilyev
 #'
+#' @references
+#'
+#' Amari, S.I. and Nagaoka, H., 2000. Methods of information geometry (Vol. 191). American Mathematical Soc..
+#'
 #' @importFrom pkgndep check_pkg
 #' @import dplyr
 #' @import purrr
