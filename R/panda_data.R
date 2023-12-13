@@ -1,7 +1,7 @@
 #' Panda data
 #'
 #' Mice were subjected to ALF or TRF feeding schedule and gene expression changes were examined in samples taken from 22 organs
-#' and brain regions collected every 2 hours over a 24-hour period (\url{https://pubmed.ncbi.nlm.nih.gov/36599299/}). Here were
+#' and brain regions collected every 2 hours over a 24-hour period (\url{https://pubmed.ncbi.nlm.nih.gov/36599299/}). Here we
 #' will look at the subset of that extensive study, in particular TRF and non-brain regions. Expression profiles reported underwent
 #' basic library depth filtering and were CPM normalised. This left 378 samples and for memory and speed considerations
 #' 1000 randomly selected genes together with clock genes were selected for further analysis.
