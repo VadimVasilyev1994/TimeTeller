@@ -129,7 +129,7 @@ train_model <- function(exp_matrix, genes, group_1, group_2, group_3, time, repl
 #'
 #' Cross-validation of the TimeTeller model using provided expression matrix and metadata. Single or multiple groups can be selected for CV
 #'
-#' @param group_to_leave_out group to leave out for cross-validation. Must be one of the \code{'group_1'}, \code{'group_2'}, \code{'group_3'} or \code{'replicate'} supplied below
+#' @param group_to_leave_out This is the group that cross-validation will be done on. For example, if \code{group_1} contains sample individual and \code{group_2} contains sample organ information, selecting \code{'group_2'} will result in CV done on organs as opposed to individuals (ie leave one organ out for testing, train on the rest). Must be one of the \code{'group_1'}, \code{'group_2'}, \code{'group_3'} or \code{'replicate'}
 #' @param genes genes used to train the TimeTeller model
 #' @param exp_matrix matrix or data frame with features in rows and samples in columns
 #' @param test_grouping_vars group variables (eg \code{'group_1'}, \code{'group_2'} or their combination \code{c('group_1','group_2')}) used for \code{timecourse_matched} normalisation. For cross-validation this will be the same as \code{grouping_vars}
