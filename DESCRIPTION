@@ -3,6 +3,7 @@ Title: Inferring circadian clock phase and dysfunction from single samples
 Version: 1.0.0
 Authors@R: 
     person("Vadim", "Vasilyev", email = "vadim.vasilyev@warwick.ac.uk", role = c("aut", "cre"))
+Maintainer: Vadim Vasilyev <vadim.vasilyev@warwick.ac.uk>
 Description: Machine learning tool that analyses the local circadian clock as a system. 
     It aims to estimate the circadian clock phase and the level of dysfunction from a single sample by modelling the multi-dimensional state of the clock
 License: GPL (>= 3)

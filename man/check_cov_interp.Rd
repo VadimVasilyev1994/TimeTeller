@@ -9,14 +9,13 @@ check_cov_interp(object, alpha = 0.95)
 \arguments{
 \item{object}{list containing circadianTT training and test models following \code{train_model}}
 
-\item{alpha}{confidence level
-#'}
+\item{alpha}{confidence level used for volume calculation}
 }
 \value{
 Returns the plot of volume of hyper-ellipse for all the local projections using \code{graphics::matplot}
 }
 \description{
-This displays the volume (area) of the hyper-ellipse at a given confidence level (\url{https://datavis.ca/papers/ellipses.pdf}). Can be useful for diagnostics and further analysis of covariance matrix interpolation
+This displays the volume (area) of the hyper-ellipse at a given confidence level (\url{https://datavis.ca/papers/ellipses.pdf}). Can be useful for diagnostics and further analysis of the covariance matrix interpolation
 }
 \author{
 Vadim Vasilyev

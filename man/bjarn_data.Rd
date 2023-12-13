@@ -21,5 +21,6 @@ bjarn_data
 }
 \description{
 A dataset containing oral mucosa expression profiles from 10 healthy individuals taken at 6 different time points 4 hours apart.
+For memory and speed considerations 1000 randomly selected probes together with clock probes were selected.
 }
 \keyword{datasets}
