@@ -22,7 +22,13 @@ library(TimeTeller)
 
 This package builds on the work in [Original publication](https://www.biorxiv.org/content/10.1101/622050v2) and [Methodology](https://www.biorxiv.org/content/10.1101/2023.03.14.532177v1.full.pdf), which showed the potential of TimeTeller to act as an independent cancer biomarker in microarray data, extended the algorithm to RNA-seq data and performed extensive validation on some of the available mouse, baboon and human datasets.
 
-TimeTeller is a machine learning tool that analyses the clock as a system and aims to estimate circadian clock function from a single transcriptome by modelling the multi-dimensional state of the clock.
+TimeTeller is a supervised machine learning tool that analyses the local circadian clock as a system. It aims to estimate the circadian clock phase and the level of dysfunction from a single sample by modelling the multi-dimensional state of the clock. 
+
+*TimeTeller* package implements the algorithm including methodology improvements and tools for visualisation.
+
+## Standard Workflow
+
+In this vignette we will look at two datasets: human oral mucosa and 
 
 ```{r load the data}
 str(bjarn_data)
