@@ -1,4 +1,4 @@
-Package: circadianTT
+Package: TimeTeller
 Title: Inferring circadian clock phase and dysfunction from single samples
 Version: 1.0.0
 Authors@R: 
@@ -44,5 +44,5 @@ Suggests:
     rrcov,
     gprofiler2,
 VignetteBuilder: knitr
-URL: https://github.com/VadimVasilyev1994/circadianTT
-BugReports: https://github.com/VadimVasilyev1994/circadianTT/issues
+URL: https://github.com/VadimVasilyev1994/TimeTeller
+BugReports: https://github.com/VadimVasilyev1994/TimeTeller/issues

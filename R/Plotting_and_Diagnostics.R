@@ -2,7 +2,7 @@
 #'
 #' Quick exploratory plot of temporal gene expression across groups and replicates for the training data.
 #'
-#' @param object list containing circadianTT training model following \code{train_model}
+#' @param object list containing TimeTeller training model following \code{train_model}
 #' @param gene gene of interest for visualisation
 #' @param group1 groups of interest for plotting. If not supplied, all levels from \code{Group_1} will be plotted
 #' @param group2 groups of interest for plotting. If not supplied, all levels from \code{Group_2} will be plotted
@@ -38,7 +38,7 @@ plot_reps <- function(object, gene, group1, group2) {
 #'
 #' Quick exploratory plot of temporal gene expression across groups. Recommended use when there are no replicates for clarity of visualisation
 #'
-#' @param object list containing circadianTT training model following \code{train_model}
+#' @param object list containing TimeTeller training model following \code{train_model}
 #' @param genes genes of interest for visualisation
 #' @param group1 groups of interest for plotting. If not supplied, all levels from \code{Group_1} will be plotted
 #' @param group2 groups of interest for plotting. If not supplied, all levels from \code{Group_2} will be plotted
@@ -75,7 +75,7 @@ plot_genes <- function(object, genes, group1, group2) {
 #'
 #' Training data projected in the principal component space.
 #'
-#' @param object list containing circadianTT training model following \code{train_model}
+#' @param object list containing TimeTeller training model following \code{train_model}
 #' @param selected_local_projection training time selected for the local projection
 #' @param density should covariance matrix cloud be displayed. Default is FALSE
 #' @param opacity opacity level if \code{density = TRUE}
@@ -155,7 +155,7 @@ plot_3d_projection <- function(object, selected_local_projection, density = FALS
 #'
 #' Test data projected onto the training model.
 #'
-#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param object list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively
 #' @param selected_local_projection training time selected for the local projection
 #' @param density should covariance matrix cloud be displayed. Default is FALSE
 #' @param opacity opacity level if \code{density = TRUE}
@@ -231,9 +231,9 @@ plot_3d_projection_with_test <- function(object, selected_local_projection, dens
 
 #' Visualise the the estimated temporal expression of test data
 #'
-#' Plots both known temporal expression of the training data and estimated temporal expression of the test data. This means that times used for the test data are the ones predicted by \code{circadianTT}
+#' Plots both known temporal expression of the training data and estimated temporal expression of the test data. This means that times used for the test data are the ones predicted by \code{TimeTeller}
 #'
-#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param object list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively
 #' @param genes genes / features of interest used for plotting
 #' @param theta_thresh threshold used for theta classification into 'Good' and 'Bad' clocks. This can be subjective and is used for visualisation and sanity check
 #' @param xlim_l lower limit for x axis. Helps with visualisation when samples cluster in a particular part of the day (eg biopsy samples taken mostly during day time)
@@ -275,9 +275,9 @@ exprs_vs_PredTime_plot <- function(object, genes, theta_thresh, xlim_l = 10, xli
 
 #' Assess precision of time predictions
 #'
-#' Useful when assessing the structure of the test data and the precision of \code{circadianTT} phase estimates
+#' Useful when assessing the structure of the test data and the precision of \code{TimeTeller} phase estimates
 #'
-#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param object list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively
 #' @param ymin lower limit for y axis. Helps with visualisation when samples cluster in a particular part of the day (eg biopsy samples taken mostly during day time)
 #' @param ymax upper limit for y axis
 #'
@@ -355,7 +355,7 @@ plot_cv_res <- function(cv_object) {
 #' @author Vadim Vasilyev
 #'
 #'
-#' @return Returns \code{circadianTT} prediction error plotted against the actual sample time
+#' @return Returns \code{TimeTeller} prediction error plotted against the actual sample time
 #' @export
 #'
 
@@ -383,7 +383,7 @@ plot_deviation_cv_corrected <- function(list_cv) {
 #' @author Vadim Vasilyev
 #'
 #'
-#' @return Returns \code{circadianTT} prediction error plotted against the actual sample time
+#' @return Returns \code{TimeTeller} prediction error plotted against the actual sample time
 #' @export
 #'
 
@@ -598,7 +598,7 @@ choose_logthresh_plot <- function(choose_logthresh_df, cap = 10, perc_flat = 0.0
 #'
 #' This displays likelihoods (for all the local projections) for individual samples. Can be useful for diagnostics and troubleshooting the model
 #'
-#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param object list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively
 #' @param sample_num number of sample to be displayed
 #' @param logthresh which log threshold should be used for visualisation
 #' @param train_or_test is the sample coming from \code{train} or \code{test} data
@@ -631,7 +631,7 @@ plot_raw_likelis <- function(object, sample_num, logthresh, train_or_test = 'tes
 #'
 #' This displays \code{theta} and flat likelihood percentage calculation for individual samples. Can be useful for diagnostics and troubleshooting the model
 #'
-#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param object list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively
 #' @param sample_num number of sample to be displayed
 #' @param logthresh which log threshold should be used for visualisation
 #' @param train_or_test is the sample coming from \code{train} or \code{test} data
@@ -696,7 +696,7 @@ plot_ind_curve <- function(object, sample_num, logthresh, train_or_test = 'test'
 #'
 #' Calculates rhythmicity results for the training data
 #'
-#' @param object list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively
+#' @param object list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively
 #' @param grouping_var how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: \code{'Group_1'}, \code{'Group_2'}, \code{'Group_3'} or \code{'Replicate'}
 #' @param method method used for rhythmicity analysis. Default is \code{'population'} as in \url{https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16}
 #' @param parallel if TRUE, parallel computation using \code{foreach} and \code{doParallel} packages will be used. Default is TRUE
@@ -809,7 +809,7 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
 #'
 #' This displays the volume (area) of the hyper-ellipse at a given confidence level (\url{https://datavis.ca/papers/ellipses.pdf}). Can be useful for diagnostics and further analysis of the covariance matrix interpolation
 #'
-#' @param object list containing circadianTT training and test models following \code{train_model}
+#' @param object list containing TimeTeller training and test models following \code{train_model}
 #' @param alpha confidence level used for volume calculation
 #'
 #' @author Vadim Vasilyev

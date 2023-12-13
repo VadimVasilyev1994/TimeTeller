@@ -73,7 +73,7 @@
 #' @export
 #'
 #' @examples
-#' library("circadianTT")
+#' library("TimeTeller")
 #' tt_model <- train_model(exp_matrix = bjarn_data$expr_mat, genes = bjarn_data$probes_used,
 #'                         group_1 = bjarn_data$group, time = bjarn_data$time, log_thresh = -5)
 
