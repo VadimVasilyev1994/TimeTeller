@@ -7,7 +7,7 @@
 plot_genes(object, genes, group1, group2)
 }
 \arguments{
-\item{object}{list containing circadianTT training model following \code{train_model}}
+\item{object}{list containing TimeTeller training model following \code{train_model}}
 
 \item{genes}{genes of interest for visualisation}
 

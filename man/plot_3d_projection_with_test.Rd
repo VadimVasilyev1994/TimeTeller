@@ -13,7 +13,7 @@ plot_3d_projection_with_test(
 )
 }
 \arguments{
-\item{object}{list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively}
+\item{object}{list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively}
 
 \item{selected_local_projection}{training time selected for the local projection}
 

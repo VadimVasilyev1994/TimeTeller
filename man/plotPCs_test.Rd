@@ -7,7 +7,7 @@
 plotPCs_test(object, ymin = 0, ymax = 24)
 }
 \arguments{
-\item{object}{list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively}
+\item{object}{list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively}
 
 \item{ymin}{lower limit for y axis. Helps with visualisation when samples cluster in a particular part of the day (eg biopsy samples taken mostly during day time)}
 
@@ -17,7 +17,7 @@ plotPCs_test(object, ymin = 0, ymax = 24)
 Returns test data projection onto the first 4 PCs vs estimated time
 }
 \description{
-Useful when assessing the structure of the test data and the precision of \code{circadianTT} phase estimates
+Useful when assessing the structure of the test data and the precision of \code{TimeTeller} phase estimates
 }
 \author{
 Vadim Vasilyev

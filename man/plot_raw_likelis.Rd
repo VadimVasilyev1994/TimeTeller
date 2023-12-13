@@ -7,7 +7,7 @@
 plot_raw_likelis(object, sample_num, logthresh, train_or_test = "test")
 }
 \arguments{
-\item{object}{list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively}
+\item{object}{list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively}
 
 \item{sample_num}{number of sample to be displayed}
 

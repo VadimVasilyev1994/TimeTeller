@@ -13,7 +13,7 @@ choose_genes_tt(
 )
 }
 \arguments{
-\item{object}{list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively}
+\item{object}{list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively}
 
 \item{grouping_var}{how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: \code{'Group_1'}, \code{'Group_2'}, \code{'Group_3'} or \code{'Replicate'}}
 

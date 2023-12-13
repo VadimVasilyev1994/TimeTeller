@@ -13,7 +13,7 @@ plot_3d_projection(
 )
 }
 \arguments{
-\item{object}{list containing circadianTT training model following \code{train_model}}
+\item{object}{list containing TimeTeller training model following \code{train_model}}
 
 \item{selected_local_projection}{training time selected for the local projection}
 

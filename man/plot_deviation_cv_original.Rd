@@ -10,7 +10,7 @@ plot_deviation_cv_original(list_cv)
 \item{list_cv}{list containing the output of \code{train_cv} function}
 }
 \value{
-Returns \code{circadianTT} prediction error plotted against the actual sample time
+Returns \code{TimeTeller} prediction error plotted against the actual sample time
 }
 \description{
 Visualisation of results following \code{train_cv} function. Plots prediction error against actual time.

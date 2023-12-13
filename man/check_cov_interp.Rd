@@ -7,7 +7,7 @@
 check_cov_interp(object, alpha = 0.95)
 }
 \arguments{
-\item{object}{list containing circadianTT training and test models following \code{train_model}}
+\item{object}{list containing TimeTeller training and test models following \code{train_model}}
 
 \item{alpha}{confidence level used for volume calculation}
 }

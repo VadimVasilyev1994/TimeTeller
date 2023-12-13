@@ -7,7 +7,7 @@
 exprs_vs_PredTime_plot(object, genes, theta_thresh, xlim_l = 10, xlim_u = 20)
 }
 \arguments{
-\item{object}{list containing circadianTT training and test models following \code{train_model} and \code{test_model} respectively}
+\item{object}{list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively}
 
 \item{genes}{genes / features of interest used for plotting}
 
@@ -21,7 +21,7 @@ exprs_vs_PredTime_plot(object, genes, theta_thresh, xlim_l = 10, xlim_u = 20)
 Returned is the \code{ggplot} object
 }
 \description{
-Plots both known temporal expression of the training data and estimated temporal expression of the test data. This means that times used for the test data are the ones predicted by \code{circadianTT}
+Plots both known temporal expression of the training data and estimated temporal expression of the test data. This means that times used for the test data are the ones predicted by \code{TimeTeller}
 }
 \author{
 Vadim Vasilyev
