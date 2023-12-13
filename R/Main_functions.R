@@ -37,6 +37,8 @@
 #'
 #' @references
 #'
+#' Vlachou, D., Veretennikova, M., Usselmann, L., Vasilyev, V., Ott, S., Bjarnason, G.A., Dallmann, R., Levi, F. and Rand, D.A., 2023. TimeTeller: a tool to probe the circadian clock as a multigene dynamical system. bioRxiv, pp.2023-03.
+#'
 #' Amari, S.I. and Nagaoka, H., 2000. Methods of information geometry (Vol. 191). American Mathematical Soc..
 #'
 #' @importFrom pkgndep check_pkg
