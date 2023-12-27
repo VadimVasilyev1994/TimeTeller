@@ -103,6 +103,11 @@ volume_func <- function(curr_sigma, alpha = 0.95, dims = 3) {
   return(volume)
 }
 
+give_names <- function(vec) {
+  names(vec) <- paste0('PC',1:length(vec))
+  return(vec)
+}
+
 prepare_raw_counts <- function(exp_matrix) {
   check_pkg('edgeR', bioc = TRUE)
   obj_dge <- edgeR::DGEList(counts=as.matrix(exp_matrix))

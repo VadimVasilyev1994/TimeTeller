@@ -840,3 +840,54 @@ check_cov_interp <- function(object, alpha = 0.95) {
   par(opar)
   return(object)
 }
+
+#' Principal component loadings
+#'
+#' Summary of principal component loadings (absolute values) for the training model
+#'
+#' @param object list containing TimeTeller training and test models following \code{train_model}
+#'
+#' @author Vadim Vasilyev
+#'
+#'
+#' @return Returns the \code{ggplot} object with the summary of absolute principal component loadings
+#' @export
+#'
+
+plot_var_importance <- function(object) {
+  pkgndep::check_pkg('tidytext', bioc = FALSE)
+  genes <- object$Metadata$Train$Genes_Used
+  proj_names <- names(object$Projections$SVD_Per_Time_Point)
+  pc_names <- paste0('PC',1:object$PC_Num)
+  aaa <- lapply(object$Projections$SVD_Per_Time_Point, function(x) as.data.frame(t(x)))
+  bbb <- purrr::list_rbind(aaa)
+  colnames(bbb) <- pc_names
+  bbb$Gene <- rep(genes, length(proj_names))
+  ccc <- bbb %>% tidyr::pivot_longer(cols = -Gene) %>% dplyr::mutate(value = abs(value)) %>%
+    dplyr::mutate(name = as.factor(name), Gene = tidytext::reorder_within(Gene, value, name))
+  ggplot(ccc, aes(x = Gene, y = value, color = Gene, fill = Gene)) + geom_boxplot(show.legend = FALSE) +
+    labs(y = 'Loading', title = 'Gene loadings') + facet_wrap(vars(name), nrow = 2, scales = 'free') +
+    coord_flip() + scale_x_reordered()
+}
+
+#' Principal component variance
+#'
+#' Summary of principal component variances explained for the training model
+#'
+#' @param object list containing TimeTeller training and test models following \code{train_model}
+#'
+#' @author Vadim Vasilyev
+#'
+#'
+#' @return Returns the \code{ggplot} object with the summary of cumulative explained variance
+#' @export
+#'
+
+plot_pc_importance <- function(object) {
+  proj_names <- names(object$Projections$SVD_Per_Time_Point_Var_Explained)
+  named_list <- lapply(object$Projections$SVD_Per_Time_Point_Var_Explained, give_names)
+  data_vec <- purrr::list_c(named_list)
+  data_df <- data.frame(value = unname(data_vec), name = names(data_vec))
+  ggplot(data_df, aes(x = name, y = value, color = name, fill = name)) + geom_boxplot(show.legend = FALSE) +
+    labs(x = 'Principal Component',y = 'Cumulative variation explained', title = 'Explained Variation')
+}

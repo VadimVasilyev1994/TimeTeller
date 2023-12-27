@@ -151,6 +151,34 @@ normalised_df <- function(object, method = 'intergene', grouping_vars = c('Group
     return(object)
   }
 
+  else if(method == 'combined'){
+    cat('Using intergene then timecourse-matched normalisation. Pay attention to the group names used when testing\n')
+    intergene_norm_df <- data %>% dplyr::ungroup() %>% rowwise() %>% dplyr::mutate(mean = mean(c_across(genes)), sd = sd(c_across(genes))) %>%
+      dplyr::ungroup() %>% dplyr::mutate(across(all_of(genes), .fns = list(normalised = ~(.x - mean)/sd))) %>%
+      dplyr::rename_at( vars( contains( "_normalised") ), list( ~paste("Intergene", gsub("_normalised", "", .), sep = "_") ) )
+
+    new_genes <- colnames(intergene_norm_df %>% ungroup() %>% dplyr::select(starts_with('Intergene_')))
+
+    timeseries_norm_df <- intergene_norm_df %>% dplyr::group_by(timeseries_ind) %>% dplyr::mutate(across(all_of(new_genes), .fns = list(normalised = ~(.x - mean(.x))/sd(.x)))) %>%
+      dplyr::rename_at( vars( contains( "_normalised") ), list( ~paste("normalised", gsub("_normalised", "", .), sep = "_") ) )
+
+    timeseries_norm_df <- timeseries_norm_df %>% dplyr::mutate(time_group = factor(paste('Time_', Time_mod24, sep = ''), levels = c(paste('Time_', sort(unique(timeseries_norm_df$Time_mod24)), sep = '')))) %>%
+      dplyr::arrange(Time_mod24)
+    object[['Train']][['Normalised_Data']] <- timeseries_norm_df
+    object[['Train']][['Normalised_Train_Exp_Data']] <- timeseries_norm_df %>% dplyr::ungroup() %>% dplyr::select(matches("normalised")) %>%
+      data.table::transpose() %>% as.matrix()
+
+    group_statistics <- intergene_norm_df %>% dplyr::group_by(across(all_of(grouping_vars))) %>% dplyr::select(all_of(new_genes)) %>%
+      dplyr::summarise_all(list(Mean = mean,SD = sd)) %>%
+      dplyr::rename_at( vars( contains( "Intergene_Gene_") ), list( ~paste("", gsub("Intergene_Gene_", "", .), sep = "") ) ) %>%
+      tidyr::unite('timeseries_matched_name', all_of(grouping_vars), remove = FALSE, sep = '|') %>%
+      tibble::column_to_rownames(var = 'timeseries_matched_name')
+    group_metrics_list <- sapply(c("Mean", "SD"), function(x) group_statistics[endsWith(names(group_statistics),x)], simplify = FALSE)
+    object[['Train']][['Gene_Per_Group_Info']] <- group_metrics_list
+    return(object)
+
+  }
+
 }
 
 get_projections <- function(object, num_PC) {
