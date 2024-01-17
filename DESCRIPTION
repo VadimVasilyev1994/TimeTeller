@@ -43,6 +43,7 @@ Suggests:
     edgeR,
     rrcov,
     gprofiler2,
+    tidytext
 VignetteBuilder: knitr
 URL: https://github.com/VadimVasilyev1994/TimeTeller
 BugReports: https://github.com/VadimVasilyev1994/TimeTeller/issues

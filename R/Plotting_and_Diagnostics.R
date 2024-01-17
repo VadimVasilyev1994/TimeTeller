@@ -867,7 +867,7 @@ plot_var_importance <- function(object) {
     dplyr::mutate(name = as.factor(name), Gene = tidytext::reorder_within(Gene, value, name))
   ggplot(ccc, aes(x = Gene, y = value, color = Gene, fill = Gene)) + geom_boxplot(show.legend = FALSE) +
     labs(y = 'Loading', title = 'Gene loadings') + facet_wrap(vars(name), nrow = 2, scales = 'free') +
-    coord_flip() + scale_x_reordered()
+    coord_flip() + tidytext::scale_x_reordered()
 }
 
 

@@ -39,7 +39,7 @@ train_cv(
 )
 }
 \arguments{
-\item{group_to_leave_out}{group to leave out for cross-validation. Must be one of the \code{'group_1'}, \code{'group_2'}, \code{'group_3'} or \code{'replicate'} supplied below}
+\item{group_to_leave_out}{This is the group that cross-validation will be done on. For example, if \code{group_1} contains sample individual and \code{group_2} contains sample organ information, selecting \code{'group_2'} will result in CV done on organs as opposed to individuals (ie leave one organ out for testing, train on the rest). Must be one of the \code{'group_1'}, \code{'group_2'}, \code{'group_3'} or \code{'replicate'}}
 
 \item{genes}{genes used to train the TimeTeller model}
 

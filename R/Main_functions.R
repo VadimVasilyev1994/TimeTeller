@@ -69,6 +69,7 @@
 #' @import psych
 #'
 #'
+#'
 #' @return Returned is the rich object of class \code{list} containing the TimeTeller model for further analysis
 #' @export
 #'
@@ -169,7 +170,7 @@ train_model <- function(exp_matrix, genes, group_1, group_2, group_3, time, repl
 #' @return Returned is the object of class \code{list} containing the results of TimeTeller cross-validation analysis
 #' @export
 #'
-#' @examples
+#'
 #'
 #'
 
