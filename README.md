@@ -47,5 +47,4 @@ suppressWarnings(devtools::install_github("VadimVasilyev1994/TimeTeller", force 
 #> package 'matrixStats' successfully unpacked and MD5 sums checked
 #> package 'robustbase' successfully unpacked and MD5 sums checked
 suppressWarnings(library(TimeTeller))
-## basic example code
 ```
