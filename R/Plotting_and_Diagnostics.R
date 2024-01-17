@@ -870,6 +870,7 @@ plot_var_importance <- function(object) {
     coord_flip() + scale_x_reordered()
 }
 
+
 #' Principal component variance
 #'
 #' Summary of principal component variances explained for the training model
