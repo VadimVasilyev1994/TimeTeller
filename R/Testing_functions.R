@@ -257,6 +257,21 @@ second_peaks_fun_test <- function(object, minpeakheight = -Inf, minpeakdistance 
   return(object)
 }
 
+#' Shift predicted phases
+#'
+#' Shifts TimeTeller predicted times to more realistic time window IF there is a second likelihood peak located in that window
+#'
+#' @param object list containing TimeTeller training and testing models
+#' @param minT lower bound for defined time window
+#' @param maxT upper bound for defined time window
+#'
+#' @author Vadim Vasilyev
+#'
+#'
+#' @return Returned is the updated object with corrected timing information
+#' @export
+#'
+
 shift_outlier_times <- function(object, minT = 8, maxT = 20) {
   data <- object[['Test_Data']][['Results_df']] %>%
     dplyr::mutate(flagged_1st = if_else(time_1st_peak < minT | time_1st_peak > maxT, TRUE, FALSE), .after = time_1st_peak) %>%
