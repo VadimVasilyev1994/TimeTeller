@@ -36,7 +36,9 @@ devtools::install_github("VadimVasilyev1994/TimeTeller")
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(TimeTeller)
+library(devtools)
+suppressWarnings(devtools::install_github("VadimVasilyev1994/TimeTeller", force = TRUE, quiet = TRUE))
+suppressWarnings(library(TimeTeller))
 ## basic example code
 ```
 
