@@ -12,6 +12,7 @@ Set of tools and visualisations for interrogating the circadian clock
 Useful links:
 \itemize{
   \item \url{https://github.com/VadimVasilyev1994/TimeTeller}
+  \item \url{https://vadimvasilyev1994.github.io/TimeTeller/}
   \item Report bugs at \url{https://github.com/VadimVasilyev1994/TimeTeller/issues}
 }
 

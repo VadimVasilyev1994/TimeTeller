@@ -45,5 +45,5 @@ Suggests:
     gprofiler2,
     tidytext
 VignetteBuilder: knitr
-URL: https://github.com/VadimVasilyev1994/TimeTeller
+URL: https://github.com/VadimVasilyev1994/TimeTeller, https://vadimvasilyev1994.github.io/TimeTeller/
 BugReports: https://github.com/VadimVasilyev1994/TimeTeller/issues

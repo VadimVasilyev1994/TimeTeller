@@ -6,13 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-TimeTeller is a supervised machine learning tool that analyses the local
-circadian clock as a system. It aims to estimate the circadian clock
-phase and the level of dysfunction from a single sample by modelling the
-multi-dimensional state of the clock.
-
-*TimeTeller* package implements the algorithm including methodology
-improvements and tools for visualisation.
+The goal of TimeTeller is to …
 
 ## Installation
 
@@ -29,22 +23,64 @@ devtools::install_github("VadimVasilyev1994/TimeTeller")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(devtools)
-#> Loading required package: usethis
-suppressWarnings(devtools::install_github("VadimVasilyev1994/TimeTeller", force = TRUE, quiet = TRUE))
-#> Installing 13 packages: rlang, glue, cli, vctrs, fansi, stringi, yaml, Rcpp, dplyr, checkmate, data.table, matrixStats, robustbase
-#> package 'rlang' successfully unpacked and MD5 sums checked
-#> package 'glue' successfully unpacked and MD5 sums checked
-#> package 'cli' successfully unpacked and MD5 sums checked
-#> package 'vctrs' successfully unpacked and MD5 sums checked
-#> package 'fansi' successfully unpacked and MD5 sums checked
-#> package 'stringi' successfully unpacked and MD5 sums checked
-#> package 'yaml' successfully unpacked and MD5 sums checked
-#> package 'Rcpp' successfully unpacked and MD5 sums checked
-#> package 'dplyr' successfully unpacked and MD5 sums checked
-#> package 'checkmate' successfully unpacked and MD5 sums checked
-#> package 'data.table' successfully unpacked and MD5 sums checked
-#> package 'matrixStats' successfully unpacked and MD5 sums checked
-#> package 'robustbase' successfully unpacked and MD5 sums checked
-suppressWarnings(library(TimeTeller))
+library(TimeTeller)
+#> Warning: replacing previous import 'Matrix::image' by 'graphics::image' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'graphics::layout' by 'plotly::layout' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'ggplot2::last_plot' by 'plotly::last_plot'
+#> when loading 'TimeTeller'
+#> Warning: replacing previous import 'ggplot2::%+%' by 'psych::%+%' when loading
+#> 'TimeTeller'
+#> Warning: replacing previous import 'ggplot2::alpha' by 'psych::alpha' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'foreach::when' by 'purrr::when' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'foreach::accumulate' by 'purrr::accumulate'
+#> when loading 'TimeTeller'
+#> Warning: replacing previous import 'Matrix::cov2cor' by 'stats::cov2cor' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading
+#> 'TimeTeller'
+#> Warning: replacing previous import 'plotly::filter' by 'stats::filter' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'Matrix::toeplitz' by 'stats::toeplitz' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'circular::var' by 'stats::var' when loading
+#> 'TimeTeller'
+#> Warning: replacing previous import 'circular::sd' by 'stats::sd' when loading
+#> 'TimeTeller'
+#> Warning: replacing previous import 'Matrix::update' by 'stats::update' when
+#> loading 'TimeTeller'
+#> Warning: replacing previous import 'Matrix::head' by 'utils::head' when loading
+#> 'TimeTeller'
+#> Warning: replacing previous import 'Matrix::tail' by 'utils::tail' when loading
+#> 'TimeTeller'
+#> Warning: replacing previous import 'purrr::transpose' by
+#> 'data.table::transpose' when loading 'TimeTeller'
+## basic example code
 ```
+
+What is special about using `README.Rmd` instead of just `README.md`?
+You can include R chunks like so:
+
+``` r
+summary(cars)
+#>      speed           dist       
+#>  Min.   : 4.0   Min.   :  2.00  
+#>  1st Qu.:12.0   1st Qu.: 26.00  
+#>  Median :15.0   Median : 36.00  
+#>  Mean   :15.4   Mean   : 42.98  
+#>  3rd Qu.:19.0   3rd Qu.: 56.00  
+#>  Max.   :25.0   Max.   :120.00
+```
+
+You’ll still need to render `README.Rmd` regularly, to keep `README.md`
+up-to-date. `devtools::build_readme()` is handy for this.
+
+You can also embed plots, for example:
+
+<img src="man/figures/README-pressure-1.png" width="100%" />
+
+In that case, don’t forget to commit and push the resulting figure
+files, so they display on GitHub and CRAN.
