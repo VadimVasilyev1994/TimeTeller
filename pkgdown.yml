@@ -1,0 +1,10 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  Basic_TimeTeller_Analysis: Basic_TimeTeller_Analysis.html
+last_built: 2024-01-18T17:02Z
+urls:
+  reference: https://vadimvasilyev1994.github.io/TimeTeller/reference
+  article: https://vadimvasilyev1994.github.io/TimeTeller/articles
+
