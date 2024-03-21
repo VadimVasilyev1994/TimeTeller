@@ -42,6 +42,8 @@
 #' Amari, S.I. and Nagaoka, H., 2000. Methods of information geometry (Vol. 191). American Mathematical Soc..
 #'
 #' @importFrom pkgndep check_pkg
+#' @import stats
+#' @import Matrix
 #' @import dplyr
 #' @import purrr
 #' @import tibble
@@ -58,10 +60,8 @@
 #' @import cosinor2
 #' @importFrom Rfast mvnorm.mle
 #' @import utils
-#' @import stats
 #' @import grDevices
 #' @import graphics
-#' @import Matrix
 #' @import circular
 #' @importFrom data.table transpose
 #' @import ggrepel
