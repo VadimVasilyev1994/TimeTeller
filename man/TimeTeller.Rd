@@ -2,8 +2,8 @@
 % Please edit documentation in R/timeteller.R
 \docType{package}
 \name{TimeTeller}
-\alias{TimeTeller}
 \alias{TimeTeller-package}
+\alias{TimeTeller}
 \title{TimeTeller: Inferring circadian phase and dysfunction from single samples}
 \description{
 Set of tools and visualisations for interrogating the circadian clock
