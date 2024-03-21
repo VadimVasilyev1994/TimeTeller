@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of TimeTeller is to ...
+TimeTeller is the machine learning tool that analyses the local circadian clock as a system. It aims to estimate the circadian clock phase and the level of dysfunction from a single sample by modelling the multi-dimensional state of the clock.
 
 ## Installation
 
@@ -29,27 +29,21 @@ You can install the development version of TimeTeller from [GitHub](https://gith
 devtools::install_github("VadimVasilyev1994/TimeTeller")
 ```
 
-## Example
+## Information
 
 This is a basic example which shows you how to solve a common problem:
 
-```{r example}
+```{r example, results = 'hide', message=FALSE, warning=FALSE}
+# load the package
 library(TimeTeller)
-## basic example code
+
+# function help
+help(train_model)
+
+# info about data included in the package
+help(panda_data)
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Examples and documentation available at [TimeTeller](https://vadimvasilyev1994.github.io/TimeTeller/).
 
-```{r cars}
-summary(cars)
-```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
