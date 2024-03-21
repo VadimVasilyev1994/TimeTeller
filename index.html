@@ -70,7 +70,7 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>The goal of TimeTeller is to …</p>
+<p>TimeTeller is the machine learning tool that analyses the local circadian clock as a system. It aims to estimate the circadian clock phase and the level of dysfunction from a single sample by modelling the multi-dimensional state of the clock.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -80,60 +80,19 @@
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"VadimVasilyev1994/TimeTeller"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="information">Information<a class="anchor" aria-label="anchor" href="#information"></a>
 </h2>
 <p>This is a basic example which shows you how to solve a common problem:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/VadimVasilyev1994/TimeTeller" class="external-link">TimeTeller</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'Matrix::image' by 'graphics::image' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'graphics::layout' by 'plotly::layout' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'ggplot2::last_plot' by 'plotly::last_plot'</span></span>
-<span><span class="co">#&gt; when loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'ggplot2::%+%' by 'psych::%+%' when loading</span></span>
-<span><span class="co">#&gt; 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'ggplot2::alpha' by 'psych::alpha' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'foreach::when' by 'purrr::when' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'foreach::accumulate' by 'purrr::accumulate'</span></span>
-<span><span class="co">#&gt; when loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'Matrix::cov2cor' by 'stats::cov2cor' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'dplyr::lag' by 'stats::lag' when loading</span></span>
-<span><span class="co">#&gt; 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'plotly::filter' by 'stats::filter' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'Matrix::toeplitz' by 'stats::toeplitz' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'circular::var' by 'stats::var' when loading</span></span>
-<span><span class="co">#&gt; 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'circular::sd' by 'stats::sd' when loading</span></span>
-<span><span class="co">#&gt; 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'Matrix::update' by 'stats::update' when</span></span>
-<span><span class="co">#&gt; loading 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'Matrix::head' by 'utils::head' when loading</span></span>
-<span><span class="co">#&gt; 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'Matrix::tail' by 'utils::tail' when loading</span></span>
-<span><span class="co">#&gt; 'TimeTeller'</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'purrr::transpose' by</span></span>
-<span><span class="co">#&gt; 'data.table::transpose' when loading 'TimeTeller'</span></span>
-<span><span class="co">## basic example code</span></span></code></pre></div>
-<p>What is special about using <code>README.Rmd</code> instead of just <code>README.md</code>? You can include R chunks like so:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cars</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      speed           dist       </span></span>
-<span><span class="co">#&gt;  Min.   : 4.0   Min.   :  2.00  </span></span>
-<span><span class="co">#&gt;  1st Qu.:12.0   1st Qu.: 26.00  </span></span>
-<span><span class="co">#&gt;  Median :15.0   Median : 36.00  </span></span>
-<span><span class="co">#&gt;  Mean   :15.4   Mean   : 42.98  </span></span>
-<span><span class="co">#&gt;  3rd Qu.:19.0   3rd Qu.: 56.00  </span></span>
-<span><span class="co">#&gt;  Max.   :25.0   Max.   :120.00</span></span></code></pre></div>
-<p>You’ll still need to render <code>README.Rmd</code> regularly, to keep <code>README.md</code> up-to-date. <code>devtools::build_readme()</code> is handy for this.</p>
-<p>You can also embed plots, for example:</p>
-<p><img src="reference/figures/README-pressure-1.png" width="100%"></p>
-<p>In that case, don’t forget to commit and push the resulting figure files, so they display on GitHub and CRAN.</p>
+<code class="sourceCode R"><span><span class="co"># load the package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/VadimVasilyev1994/TimeTeller" class="external-link">TimeTeller</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># function help</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="va">train_model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># info about data included in the package</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/help.html" class="external-link">help</a></span><span class="op">(</span><span class="va">panda_data</span><span class="op">)</span></span></code></pre></div>
+<p>Examples and documentation available at <a href="https://vadimvasilyev1994.github.io/TimeTeller/">TimeTeller</a>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
