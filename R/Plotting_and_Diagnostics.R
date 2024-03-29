@@ -62,11 +62,24 @@ plot_genes <- function(object, genes, group1, group2) {
   colnames(data) <- gene_names
   data <- data %>%
     dplyr::mutate(Group = as.character(group_1), Group_2 = as.character(group_2), Time = factor(time, levels = sort(unique(time))), Replicate = as.character(replicate))
-  pivoted_df <- tidyr::pivot_longer(data, cols = all_of(gene_names), names_to = "Gene", values_to = "Expression")
-  group_df <- pivoted_df %>% dplyr::filter(Group %in% group1, Group_2 %in% group2) %>% dplyr::mutate_all(~replace_na(.,"Not Provided"))
-  gg_group <- ggplot(data = group_df, mapping = aes(x = Time, y = Expression, group = Gene)) + geom_point(aes(color = Gene)) +
-    facet_grid(rows = vars(Group), cols = vars(Group_2)) + geom_line(aes(color = Gene)) + labs(title = "Groupwise normalised expression for the selected genes") +
-    theme(plot.title = element_text(size = 12, face = "bold", color = "black"))
+
+  linewidth_used <- ifelse(length(genes) < 6, 1.25, 1)
+
+  if (length(unique(replicate)) <= 1) {
+    pivoted_df <- tidyr::pivot_longer(data, cols = all_of(gene_names), names_to = "Gene", values_to = "Expression")
+    group_df <- pivoted_df %>% dplyr::filter(Group %in% group1, Group_2 %in% group2) %>% dplyr::mutate_all(~replace_na(.,"Not Provided"))
+    gg_group <- ggplot(data = group_df, mapping = aes(x = Time, y = Expression, group = Gene)) + geom_point(aes(color = Gene)) +
+      facet_grid(rows = vars(Group), cols = vars(Group_2)) + geom_line(aes(color = Gene, linewidth = linewidth_used)) + labs(title = "Groupwise normalised expression for the selected genes") +
+      theme(plot.title = element_text(size = 12, face = "bold", color = "black"))
+  } else {
+    pivoted_df <- tidyr::pivot_longer(data, cols = all_of(gene_names), names_to = "Gene", values_to = "Expression")
+    group_df <- pivoted_df %>% dplyr::filter(Group %in% group1, Group_2 %in% group2) %>% dplyr::mutate_all(~replace_na(.,"Not Provided"))
+    gg_group <- ggplot(data = group_df, mapping = aes(x = Time, y = Expression, colour = Gene)) + geom_point(aes(color = Gene)) +
+      facet_grid(rows = vars(Group), cols = vars(Group_2)) + geom_line(aes(group = Gene), stat = "summary", fun = mean, linewidth = linewidth_used) +
+      labs(title = "Groupwise normalised expression for the selected genes") +
+      theme(plot.title = element_text(size = 12, face = "bold", color = "black"))
+  }
+
   return(gg_group)
 
 }
