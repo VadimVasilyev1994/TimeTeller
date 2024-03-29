@@ -720,6 +720,7 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
                                      rAMP = rep(NA,length(rownames(data))), Rsquared = rep(NA,length(rownames(data))))
   rownames(entrained_results_df) <- rownames(data)
 
+
   if(length(grouping_var) > 1) {
     group_vec <- grouping_var
   } else if(grouping_var == 'Group_1') {
@@ -804,6 +805,92 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
   }
   parallel::stopCluster(cl = my.cluster)
 }
+
+#' Rhythmicity analysis of selected geneset
+#'
+#' Convenience function for single cosinor and visualisation of the selected geneset
+#'
+#' @param object list containing TimeTeller rhythmicity results following \code{choose_genes_tt}
+#' @param geneset geneset of interest
+#' @param labels genes to highlight on the resulting polar plot
+#' @param grouping_var how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: \code{'Group_1'}, \code{'Group_2'}, \code{'Group_3'} or \code{'Replicate'}
+#' @param method method used for rhythmicity analysis. Default is \code{'population'} as in \url{https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16}
+#'
+#' @author Vadim Vasilyev
+#'
+#' @references
+#'
+#' Cornelissen, G., 2014. Cosinor-based rhythmometry. Theoretical Biology and Medical Modelling, 11(1), pp.1-24.
+#'
+#' @return Returns an array containing single cosinor results (MESOR and Amp) and the polar plot with summary info
+#' @export
+#'
+#'
+
+geneset_rhythm_info <- function(object, geneset, labels, grouping_var = "Replicate", method = 'population') {
+
+  data <- object[["Full_Original_Data"]]
+  time_vec <- object[["Metadata"]][["Train"]][["Time"]]
+
+  geneset_present <- geneset[geneset %in% rownames(data)]
+
+  if(missing(labels)) {labels <- geneset_present}
+  labels <- labels[labels %in% geneset_present]
+
+  if (length(grouping_var) > 1) {
+    group_vec <- grouping_var
+  }
+  else if (grouping_var == "Group_1") {
+    group_vec <- object[["Metadata"]][["Train"]][["Group_1"]]
+  }
+  else if (grouping_var == "Group_2") {
+    group_vec <- object[["Metadata"]][["Train"]][["Group_2"]]
+  }
+  else if (grouping_var == "Group_3") {
+    group_vec <- object[["Metadata"]][["Train"]][["Group_3"]]
+  }
+  else if (grouping_var == "Replicate") {
+    group_vec <- object[["Metadata"]][["Train"]][["Replicate"]]
+  }
+  else {
+    stop("Grouping variable specified not found in Metadata")
+  }
+
+  ind_array <- base::array(NA, dim = c(length(geneset_present), 2, length(unique(group_vec))))
+
+  pb <- txtProgressBar(min = 0, max = length(geneset), style = 3, width = 50, char = "=")
+  for (i in 1:length(geneset_present)) {
+    curr_gene <- geneset_present[i]
+    expression_df <- data.frame(Expression = data[curr_gene, ], Time = time_vec, Group = factor(group_vec))
+    expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>% tibble::column_to_rownames("Group")
+    times <- as.numeric(colnames(expression_df))
+    pop_cosinor <- quiet(population.cosinor.lm(expression_df, times, period = 24, plot = FALSE))
+
+    ind_array[i, 1, ] <- unname(unlist(purrr::map(pop_cosinor$single.cos, as_mapper(~ .x$coefficients[1]))))
+    ind_array[i, 2, ] <- unname(unlist(purrr::map(pop_cosinor$single.cos, as_mapper(~ .x$coefficients['amp']))))
+
+    Sys.sleep(0.05)
+    setTxtProgressBar(pb, i)
+  }
+  close(pb)
+
+  results_df <- object[["Rhythmicity_Results"]][geneset_present, ] %>%
+    dplyr::mutate(Sig = if_else(Pval.adj < 0.10, 'Rhythmic', 'Not Rhythmic'))
+
+
+  dimnames(ind_array) <- list(geneset_present, c('MESOR','Amp'), paste0('G_',levels(factor(group_vec))))
+
+  p1 <- ggplot(results_df %>% filter(MESOR > 3), aes(x = Phase, y = rAMP))  +
+    geom_point(size = 2.25, aes(color = Sig)) + ggtitle('Geneset Summary Rhythmic Info') + scale_x_continuous(limits = c(0,24), breaks = seq(0,24,by = 2)) +
+    geom_text_repel(data = results_df %>% filter(Gene %in% labels, MESOR > 3), aes(label = Gene), box.padding = 0.5, max.overlaps = Inf, size = 2.5) +
+    coord_polar()
+
+  print(p1)
+
+  return(ind_array)
+}
+
+
 
 #' Covariance matrix ellipsoid volume
 #'
