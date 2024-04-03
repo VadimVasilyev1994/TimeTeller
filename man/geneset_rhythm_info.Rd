@@ -8,7 +8,10 @@ geneset_rhythm_info(
   object,
   geneset,
   labels,
-  grouping_var = "Replicate",
+  group1,
+  group2,
+  group3,
+  replicate,
   method = "population"
 )
 }
@@ -19,12 +22,18 @@ geneset_rhythm_info(
 
 \item{labels}{genes to highlight on the resulting polar plot}
 
-\item{grouping_var}{how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: \code{'Group_1'}, \code{'Group_2'}, \code{'Group_3'} or \code{'Replicate'}}
+\item{group1}{if only a subset of Group_1 (Metadata provided) should be used}
+
+\item{group2}{if only a subset of Group_2 (Metadata provided) should be used}
+
+\item{group3}{if only a subset of Group_3 (Metadata provided) should be used}
+
+\item{replicate}{if only a subset of Replicate (Metadata provided) should be used}
 
 \item{method}{method used for rhythmicity analysis. Default is \code{'population'} as in \url{https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16}}
 }
 \value{
-Returns an array containing single cosinor results (MESOR and Amp) and the polar plot with summary info
+Returns an array containing single cosinor results (MESOR, Amp and Rhythmicity test Pval) and the polar plot with summary info
 }
 \description{
 Convenience function for single cosinor and visualisation of the selected geneset

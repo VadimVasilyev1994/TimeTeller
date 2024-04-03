@@ -725,8 +725,8 @@ plot_ind_curve <- function(object, sample_num, logthresh, train_or_test = 'test'
 #' @export
 #'
 
-choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'population', parallel = TRUE, cores = 4){
-  message(paste0('Selection will be done using ', ifelse(length(grouping_var) > 1, 'Manual',grouping_var)))
+choose_genes_tt <- function(object, group1, group2, group3, replicate, method = 'population', parallel = TRUE, cores = 4){
+
   data <- object[['Full_Original_Data']]
   time_vec <- object[['Metadata']][['Train']][['Time']]
   entrained_results_df <- data.frame(Pval = rep(NA,length(rownames(data))), Phase = rep(NA,length(rownames(data))),
@@ -734,19 +734,17 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
   rownames(entrained_results_df) <- rownames(data)
 
 
-  if(length(grouping_var) > 1) {
-    group_vec <- grouping_var
-  } else if(grouping_var == 'Group_1') {
-    group_vec <- object[['Metadata']][['Train']][['Group_1']]
-  } else if(grouping_var == 'Group_2') {
-    group_vec <- object[['Metadata']][['Train']][['Group_2']]
-  } else if(grouping_var == 'Group_3') {
-    group_vec <- object[['Metadata']][['Train']][['Group_3']]
-  } else if(grouping_var == 'Replicate') {
-    group_vec <- object[['Metadata']][['Train']][['Replicate']]
-  } else {
-    stop("Grouping variable specified not found in Metadata")
-  }
+  if (missing(group1)) {index_gr1 <- 1:dim(data)[2]} else {index_gr1 <- which(object[['Metadata']][['Train']][['Group_1']] %in% group1)}
+  if (missing(group2)) {index_gr2 <- 1:dim(data)[2]} else {index_gr2 <- which(object[['Metadata']][['Train']][['Group_2']] %in% group2)}
+  if (missing(group3)) {index_gr3 <- 1:dim(data)[2]} else {index_gr3 <- which(object[['Metadata']][['Train']][['Group_3']] %in% group3)}
+  if (missing(replicate)) {index_rep <- 1:dim(data)[2]} else {index_rep <- which(object[['Metadata']][['Train']][['Replicate']] %in% replicate)}
+
+  index_used <- Reduce(intersect, list(index_gr1, index_gr2, index_gr3, index_rep))
+  data <- data[ ,index_used]
+  time_vec <- time_vec[index_used]
+  group_vec <- paste(paste(object[["Metadata"]][["Train"]][["Group_1"]], object[["Metadata"]][["Train"]][["Group_2"]],
+                           object[["Metadata"]][["Train"]][["Group_3"]], object[["Metadata"]][["Train"]][["Replicate"]], sep = '_'))[index_used]
+
 
   if (parallel == TRUE) {
     my.cluster <- parallel::makeCluster(
@@ -757,10 +755,8 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
 
     results_df <- foreach(i = 1:length(rownames(data)), .combine = 'rbind', .inorder = TRUE, .packages = c('cosinor2','psych','tidyverse'), .export = c('data','group_vec','time_vec')) %dopar% {
       curr_gene <- rownames(data)[i]
-      expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec), Replicate = factor(object[['Metadata']][['Train']][['Replicate']])) %>%
-        tidyr::unite('Group_rep', c(Group,Replicate), remove = TRUE, sep = '|')
-      expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>%
-        tibble::column_to_rownames('Group_rep')
+      expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec, levels = unique(group_vec)))
+      expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>% tibble::column_to_rownames('Group')
       times <- as.numeric(colnames(expression_df))
 
       pop_cosinor <- population.cosinor.lm(expression_df, times, period = 24, plot = FALSE)
@@ -789,10 +785,8 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
     pb <- txtProgressBar(min = 0, max = length(rownames(data)), style = 3, width = 50, char = "=")
     for (i in 1:length(rownames(data))) {
       curr_gene <- rownames(data)[i]
-      expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec), Replicate = factor(object[['Metadata']][['Train']][['Replicate']])) %>%
-        tidyr::unite('Group_rep', c(Group,Replicate), remove = TRUE, sep = '|')
-      expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>%
-        tibble::column_to_rownames('Group_rep')
+      expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec, levels = unique(group_vec)))
+      expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>% tibble::column_to_rownames('Group')
       times <- as.numeric(colnames(expression_df))
       pop_cosinor <- quiet(population.cosinor.lm(expression_df, times, period = 24, plot = FALSE))
       population_cos_rAMP <- pop_cosinor$coefficients$Amplitude / pop_cosinor$coefficients$MESOR
@@ -827,7 +821,10 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
 #' @param object list containing TimeTeller rhythmicity results following \code{choose_genes_tt}
 #' @param geneset geneset of interest
 #' @param labels genes to highlight on the resulting polar plot
-#' @param grouping_var how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: \code{'Group_1'}, \code{'Group_2'}, \code{'Group_3'} or \code{'Replicate'}
+#' @param group1 if only a subset of Group_1 (Metadata provided) should be used
+#' @param group2 if only a subset of Group_2 (Metadata provided) should be used
+#' @param group3 if only a subset of Group_3 (Metadata provided) should be used
+#' @param replicate if only a subset of Replicate (Metadata provided) should be used
 #' @param method method used for rhythmicity analysis. Default is \code{'population'} as in \url{https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16}
 #'
 #' @author Vadim Vasilyev
@@ -836,53 +833,45 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
 #'
 #' Cornelissen, G., 2014. Cosinor-based rhythmometry. Theoretical Biology and Medical Modelling, 11(1), pp.1-24.
 #'
-#' @return Returns an array containing single cosinor results (MESOR and Amp) and the polar plot with summary info
+#' @return Returns an array containing single cosinor results (MESOR, Amp and Rhythmicity test Pval) and the polar plot with summary info
 #' @export
 #'
 #'
 
-geneset_rhythm_info <- function(object, geneset, labels, grouping_var = "Replicate", method = 'population') {
+geneset_rhythm_info <- function(object, geneset, labels, group1, group2, group3, replicate, method = 'population') {
 
   data <- object[["Full_Original_Data"]]
   time_vec <- object[["Metadata"]][["Train"]][["Time"]]
 
   geneset_present <- geneset[geneset %in% rownames(data)]
 
-  if(missing(labels)) {labels <- geneset_present}
+  if (missing(labels)) {labels <- geneset_present}
   labels <- labels[labels %in% geneset_present]
 
-  if (length(grouping_var) > 1) {
-    group_vec <- grouping_var
-  }
-  else if (grouping_var == "Group_1") {
-    group_vec <- object[["Metadata"]][["Train"]][["Group_1"]]
-  }
-  else if (grouping_var == "Group_2") {
-    group_vec <- object[["Metadata"]][["Train"]][["Group_2"]]
-  }
-  else if (grouping_var == "Group_3") {
-    group_vec <- object[["Metadata"]][["Train"]][["Group_3"]]
-  }
-  else if (grouping_var == "Replicate") {
-    group_vec <- object[["Metadata"]][["Train"]][["Replicate"]]
-  }
-  else {
-    stop("Grouping variable specified not found in Metadata")
-  }
+  if (missing(group1)) {index_gr1 <- 1:dim(data)[2]} else {index_gr1 <- which(object[['Metadata']][['Train']][['Group_1']] %in% group1)}
+  if (missing(group2)) {index_gr2 <- 1:dim(data)[2]} else {index_gr2 <- which(object[['Metadata']][['Train']][['Group_2']] %in% group2)}
+  if (missing(group3)) {index_gr3 <- 1:dim(data)[2]} else {index_gr3 <- which(object[['Metadata']][['Train']][['Group_3']] %in% group3)}
+  if (missing(replicate)) {index_rep <- 1:dim(data)[2]} else {index_rep <- which(object[['Metadata']][['Train']][['Replicate']] %in% replicate)}
 
-  ind_array <- base::array(NA, dim = c(length(geneset_present), 2, length(unique(group_vec))))
+  index_used <- Reduce(intersect, list(index_gr1, index_gr2, index_gr3, index_rep))
+  data <- data[ ,index_used]
+  time_vec <- time_vec[index_used]
+  group_vec <- paste(paste(object[["Metadata"]][["Train"]][["Group_1"]], object[["Metadata"]][["Train"]][["Group_2"]],
+                           object[["Metadata"]][["Train"]][["Group_3"]], object[["Metadata"]][["Train"]][["Replicate"]], sep = '_'))[index_used]
+
+  ind_array <- base::array(NA, dim = c(length(geneset_present), 3, length(unique(group_vec))))
 
   pb <- txtProgressBar(min = 0, max = length(geneset), style = 3, width = 50, char = "=")
   for (i in 1:length(geneset_present)) {
     curr_gene <- geneset_present[i]
-    expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec), Replicate = factor(object[['Metadata']][['Train']][['Replicate']])) %>%
-      tidyr::unite('Group_rep', c(Group,Replicate), remove = TRUE, sep = '|')
-    expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>% tibble::column_to_rownames("Group_rep")
+    expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec, levels = unique(group_vec)))
+    expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>% tibble::column_to_rownames("Group")
     times <- as.numeric(colnames(expression_df))
     pop_cosinor <- quiet(population.cosinor.lm(expression_df, times, period = 24, plot = FALSE))
 
     ind_array[i, 1, ] <- unname(unlist(purrr::map(pop_cosinor$single.cos, as_mapper(~ .x$coefficients[1]))))
     ind_array[i, 2, ] <- unname(unlist(purrr::map(pop_cosinor$single.cos, as_mapper(~ .x$coefficients['amp']))))
+    ind_array[i, 3, ] <- unname(unlist(purrr::map(pop_cosinor$single.cos, as_mapper(~ cosinor.detect(.x)[4]))))
 
     Sys.sleep(0.05)
     setTxtProgressBar(pb, i)
@@ -893,7 +882,7 @@ geneset_rhythm_info <- function(object, geneset, labels, grouping_var = "Replica
     dplyr::mutate(Sig = if_else(Pval.adj < 0.10, 'Rhythmic', 'Not Rhythmic'))
 
 
-  dimnames(ind_array) <- list(geneset_present, c('MESOR','Amp'), paste0('G_',levels(factor(group_vec))))
+  dimnames(ind_array) <- list(geneset_present, c('MESOR','Amp','Pval'), levels(factor(group_vec)))
 
   p1 <- ggplot(results_df %>% filter(MESOR > 3), aes(x = Phase, y = rAMP))  +
     geom_point(size = 2.25, aes(color = Sig)) + ggtitle('Geneset Summary Rhythmic Info') + scale_x_continuous(limits = c(0,24), breaks = seq(0,24,by = 2)) +
