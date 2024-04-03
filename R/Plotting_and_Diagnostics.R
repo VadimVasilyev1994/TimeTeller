@@ -889,7 +889,7 @@ geneset_rhythm_info <- function(object, geneset, labels, group1, group2, group3,
 
   p1 <- ggplot(results_df %>% dplyr::filter(MESOR > 3), aes(x = Phase, y = rAMP))  +
     geom_point(size = 2.25, aes(color = Sig)) + ggtitle('Geneset Summary Rhythmic Info') + scale_x_continuous(limits = c(0,24), breaks = seq(0,24,by = 2)) +
-    geom_text_repel(data = results_df %>% filter(Gene %in% labels, MESOR > 3), aes(label = Gene), box.padding = 0.5, max.overlaps = Inf, size = 2.5) +
+    geom_text_repel(data = results_df %>% dplyr::filter(Gene %in% labels, MESOR > 3), aes(label = Gene), box.padding = 0.5, max.overlaps = Inf, size = 2.5) +
     coord_polar()
 
   print(p1)
