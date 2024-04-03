@@ -841,7 +841,7 @@ choose_genes_tt <- function(object, group1, group2, group3, replicate, method = 
 #'
 #'
 
-geneset_rhythm_info <- function(object, geneset, labels, group1, group2, group3, replicate, method = 'population') {
+geneset_rhythm_info <- function(object, geneset, labels, group1, group2, group3, replicate, method = 'population', pval_cutoff = 0.05) {
 
   data <- object[["Full_Original_Data"]]
   time_vec <- object[["Metadata"]][["Train"]][["Time"]]
@@ -882,7 +882,7 @@ geneset_rhythm_info <- function(object, geneset, labels, group1, group2, group3,
   close(pb)
 
   results_df <- object[["Rhythmicity_Results"]][geneset_present, ] %>%
-    dplyr::mutate(Sig = if_else(Pval.adj < 0.10, 'Rhythmic', 'Not Rhythmic'))
+    dplyr::mutate(Sig = if_else(Pval.adj < pval_cutoff, 'Rhythmic', 'Not Rhythmic'))
 
 
   dimnames(ind_array) <- list(geneset_present, c('MESOR','Amp','Pval'), levels(factor(group_vec)))
