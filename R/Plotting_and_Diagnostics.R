@@ -710,7 +710,10 @@ plot_ind_curve <- function(object, sample_num, logthresh, train_or_test = 'test'
 #' Calculates rhythmicity results for the training data
 #'
 #' @param object list containing TimeTeller training and test models following \code{train_model} and \code{test_model} respectively
-#' @param grouping_var how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: \code{'Group_1'}, \code{'Group_2'}, \code{'Group_3'} or \code{'Replicate'}
+#' @param group1 if only a subset of Group_1 (Metadata provided) should be used
+#' @param group2 if only a subset of Group_2 (Metadata provided) should be used
+#' @param group3 if only a subset of Group_3 (Metadata provided) should be used
+#' @param replicate if only a subset of Replicate (Metadata provided) should be used
 #' @param method method used for rhythmicity analysis. Default is \code{'population'} as in \url{https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16}
 #' @param parallel if TRUE, parallel computation using \code{foreach} and \code{doParallel} packages will be used. Default is TRUE
 #' @param cores if using parallel computation, how many cores should be used. Default is 4
