@@ -792,7 +792,7 @@ choose_genes_tt <- function(object, grouping_var = 'Group_1', method = 'populati
       expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec), Replicate = factor(object[['Metadata']][['Train']][['Replicate']])) %>%
         tidyr::unite('Group_rep', c(Group,Replicate), remove = TRUE, sep = '|')
       expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>%
-        tibble::column_to_rownames('Group')
+        tibble::column_to_rownames('Group_rep')
       times <- as.numeric(colnames(expression_df))
       pop_cosinor <- quiet(population.cosinor.lm(expression_df, times, period = 24, plot = FALSE))
       population_cos_rAMP <- pop_cosinor$coefficients$Amplitude / pop_cosinor$coefficients$MESOR
@@ -877,7 +877,7 @@ geneset_rhythm_info <- function(object, geneset, labels, grouping_var = "Replica
     curr_gene <- geneset_present[i]
     expression_df <- data.frame(Expression = data[curr_gene,], Time = time_vec, Group = factor(group_vec), Replicate = factor(object[['Metadata']][['Train']][['Replicate']])) %>%
       tidyr::unite('Group_rep', c(Group,Replicate), remove = TRUE, sep = '|')
-    expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>% tibble::column_to_rownames("Group")
+    expression_df <- expression_df %>% tidyr::pivot_wider(names_from = Time, values_from = Expression) %>% tibble::column_to_rownames("Group_rep")
     times <- as.numeric(colnames(expression_df))
     pop_cosinor <- quiet(population.cosinor.lm(expression_df, times, period = 24, plot = FALSE))
 
