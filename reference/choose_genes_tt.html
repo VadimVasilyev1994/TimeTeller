@@ -56,7 +56,10 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">choose_genes_tt</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
-<span>  grouping_var <span class="op">=</span> <span class="st">"Group_1"</span>,</span>
+<span>  <span class="va">group1</span>,</span>
+<span>  <span class="va">group2</span>,</span>
+<span>  <span class="va">group3</span>,</span>
+<span>  <span class="va">replicate</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"population"</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  cores <span class="op">=</span> <span class="fl">4</span></span>
@@ -69,10 +72,6 @@
 <dd><p>list containing TimeTeller training and test models following <code>train_model</code> and <code>test_model</code> respectively</p></dd>
 
 
-<dt>grouping_var</dt>
-<dd><p>how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: <code>'Group_1'</code>, <code>'Group_2'</code>, <code>'Group_3'</code> or <code>'Replicate'</code></p></dd>
-
-
 <dt>method</dt>
 <dd><p>method used for rhythmicity analysis. Default is <code>'population'</code> as in <a href="https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16" class="external-link">https://tbiomed.biomedcentral.com/articles/10.1186/1742-4682-11-16</a></p></dd>
 
@@ -83,6 +82,10 @@
 
 <dt>cores</dt>
 <dd><p>if using parallel computation, how many cores should be used. Default is 4</p></dd>
+
+
+<dt>grouping_var</dt>
+<dd><p>how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: <code>'Group_1'</code>, <code>'Group_2'</code>, <code>'Group_3'</code> or <code>'Replicate'</code></p></dd>
 
 </dl></div>
     <div class="section level2">

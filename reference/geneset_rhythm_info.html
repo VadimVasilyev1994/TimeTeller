@@ -58,7 +58,10 @@
 <span>  <span class="va">object</span>,</span>
 <span>  <span class="va">geneset</span>,</span>
 <span>  <span class="va">labels</span>,</span>
-<span>  grouping_var <span class="op">=</span> <span class="st">"Replicate"</span>,</span>
+<span>  <span class="va">group1</span>,</span>
+<span>  <span class="va">group2</span>,</span>
+<span>  <span class="va">group3</span>,</span>
+<span>  <span class="va">replicate</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"population"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -77,8 +80,20 @@
 <dd><p>genes to highlight on the resulting polar plot</p></dd>
 
 
-<dt>grouping_var</dt>
-<dd><p>how samples should be grouped for rhythmicity analysis. Should be either provided manually or be one of the following: <code>'Group_1'</code>, <code>'Group_2'</code>, <code>'Group_3'</code> or <code>'Replicate'</code></p></dd>
+<dt>group1</dt>
+<dd><p>if only a subset of Group_1 (Metadata provided) should be used</p></dd>
+
+
+<dt>group2</dt>
+<dd><p>if only a subset of Group_2 (Metadata provided) should be used</p></dd>
+
+
+<dt>group3</dt>
+<dd><p>if only a subset of Group_3 (Metadata provided) should be used</p></dd>
+
+
+<dt>replicate</dt>
+<dd><p>if only a subset of Replicate (Metadata provided) should be used</p></dd>
 
 
 <dt>method</dt>
@@ -89,7 +104,7 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Returns an array containing single cosinor results (MESOR and Amp) and the polar plot with summary info</p>
+<p>Returns an array containing single cosinor results (MESOR, Amp and Rhythmicity test Pval) and the polar plot with summary info</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
