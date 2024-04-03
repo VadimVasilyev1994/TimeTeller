@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   Basic_TimeTeller_Analysis: Basic_TimeTeller_Analysis.html
-last_built: 2024-04-03T17:17Z
+last_built: 2024-04-03T17:31Z
 urls:
   reference: https://vadimvasilyev1994.github.io/TimeTeller/reference
   article: https://vadimvasilyev1994.github.io/TimeTeller/articles
