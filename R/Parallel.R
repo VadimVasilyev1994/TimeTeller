@@ -9,17 +9,17 @@ calc_train_likelis_dev <- function(object) {
     mat <- foreach(ind_num = 1:dim(train_exp_data)[2], .combine = 'cbind', .inorder = TRUE, .packages = c('Matrix','mvtnorm','foreach')) %dopar% {
       foreach(j = 1:dim(fitted_mvn_data)[2], .combine = 'c', .inorder = TRUE) %do% {
         curr_sigma <- matrix(fitted_mvn_data[(num_PC+1):(num_PC+num_PC^2),j,i], nrow = num_PC)
-        curr_eig <- eigen(curr_sigma)$values
+        curr_eig <- eigen(curr_sigma, symmetric = TRUE, only.values = TRUE)$values
         if (any(curr_eig < 0)) {
           sigma_used <- nearPD(curr_sigma, base.matrix = TRUE, ensureSymmetry = TRUE, eig.tol = 1e-05, conv.tol = 1e-06, posd.tol = 1e-07)$mat
         } else {
           sigma_used <- curr_sigma
         }
-        
+
         vec <- mvtnorm::dmvnorm(project_exp_mat[,ind_num], mean = fitted_mvn_data[1:num_PC,j,i], sigma = sigma_used, checkSymmetry = FALSE)
-        
+
       }
-      
+
     }
     train_likelihood_array[ , ,i] <- mat
     Sys.sleep(0.01)
@@ -38,10 +38,10 @@ theta_calc_train_dev <- function(object, epsilon = 0.4, eta = 0.35) {
     curr_sample <- exp(averaged_likelis_rescaled[i,])
     curr_lrf_curve <- curr_sample / max(curr_sample)
     curr_curve <- suppressWarnings(eta*(1 + epsilon + cos(2*pi*((1:num_points)/num_points - which(curr_lrf_curve == max(curr_lrf_curve))/num_points))))
-    
+
     lrf_curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_lrf_curve, period = num_points),seq(1,num_points,length.out = 1000))
     curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_curve, period = num_points),seq(1,num_points,length.out = 1000))
-    
+
     thetas <- sum(lrf_curve_spline$y > curve_spline$y) / length(lrf_curve_spline$y)
   }
   object[['Train_Data']][['Thetas_Train']] <- thetas
@@ -62,12 +62,12 @@ calc_flat_theta_contrib_train_dev <- function(object) {
     ind_ts <- exp(averaged_likelis_rescaled[i,])
     ind_ts <- shift_ts(ind_ts, round(num_points/2))
     ind_lrf_curve <- ind_ts / max(ind_ts)
-    
+
     curr_curve <- suppressWarnings(eta*(1 + epsilon + cos(2*pi*((1:num_points)/num_points - which(ind_lrf_curve == max(ind_lrf_curve))/num_points))))
     lrf_curve_spline <- stats::predict(splines::periodicSpline(1:num_points,ind_lrf_curve, period = num_points),seq(1,num_points,length.out = 1000))
     curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_curve, period = num_points),seq(1,num_points,length.out = 1000))
-    
-    theta_index <- which(lrf_curve_spline$y > curve_spline$y) 
+
+    theta_index <- which(lrf_curve_spline$y > curve_spline$y)
     flat_regions <- which(abs(diff(lrf_curve_spline$y)) < 1e-4)
     flat_contribution[i] <- sum(theta_index %in% flat_regions) / length(theta_index) * 100
   }
@@ -89,17 +89,17 @@ calc_test_likelis_dev <- function(object) {
     mat <- foreach(ind_num = 1:dim(test_exp_data)[2], .combine = 'cbind', .inorder = TRUE, .packages = c('Matrix','mvtnorm','foreach')) %dopar% {
       foreach(j = 1:dim(fitted_mvn_data)[2], .combine = 'c', .inorder = TRUE) %do% {
         curr_sigma <- matrix(fitted_mvn_data[(num_PC+1):(num_PC+num_PC^2),j,i], nrow = num_PC)
-        curr_eig <- eigen(curr_sigma)$values
+        curr_eig <- eigen(curr_sigma, symmetric = TRUE, only.values = TRUE)$values
         if (any(curr_eig < 0)) {
           sigma_used <- nearPD(curr_sigma, base.matrix = TRUE, ensureSymmetry = TRUE, eig.tol = 1e-05, conv.tol = 1e-06, posd.tol = 1e-07)$mat
         } else {
           sigma_used <- curr_sigma
         }
-        
+
         vec <- mvtnorm::dmvnorm(project_exp_mat[,ind_num], mean = fitted_mvn_data[1:num_PC,j,i], sigma = sigma_used, checkSymmetry = FALSE)
-        
+
       }
-      
+
     }
     test_likelihood_array[ , ,i] <- mat
     Sys.sleep(0.01)
@@ -122,10 +122,10 @@ theta_calc_test_dev <- function(object) {
     curr_sample <- exp(averaged_likelis_rescaled[i,])
     curr_lrf_curve <- curr_sample / max(curr_sample)
     curr_curve <- suppressWarnings(eta*(1 + epsilon + cos(2*pi*((1:num_points)/num_points - which(curr_lrf_curve == max(curr_lrf_curve))/num_points))))
-    
+
     lrf_curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_lrf_curve, period = num_points),seq(1,num_points,length.out = 1000))
     curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_curve, period = num_points),seq(1,num_points,length.out = 1000))
-    
+
     thetas <- sum(lrf_curve_spline$y > curve_spline$y) / length(lrf_curve_spline$y)
   }
   object[['Test_Data']][['Thetas_Test']] <- thetas
@@ -144,12 +144,12 @@ calc_flat_theta_contrib_test_dev <- function(object) {
     ind_ts <- exp(averaged_likelis_rescaled[i,])
     ind_ts <- shift_ts(ind_ts, round(num_points/2))
     ind_lrf_curve <- ind_ts / max(ind_ts)
-    
+
     curr_curve <- suppressWarnings(eta*(1 + epsilon + cos(2*pi*((1:num_points)/num_points - which(ind_lrf_curve == max(ind_lrf_curve))/num_points))))
     lrf_curve_spline <- stats::predict(splines::periodicSpline(1:num_points,ind_lrf_curve, period = num_points),seq(1,num_points,length.out = 1000))
     curve_spline <- stats::predict(splines::periodicSpline(1:num_points,curr_curve, period = num_points),seq(1,num_points,length.out = 1000))
-    
-    theta_index <- which(lrf_curve_spline$y > curve_spline$y) 
+
+    theta_index <- which(lrf_curve_spline$y > curve_spline$y)
     flat_regions <- which(abs(diff(lrf_curve_spline$y)) < 1e-4)
     flat_contribution[i] <- sum(theta_index %in% flat_regions) / length(theta_index) * 100
   }

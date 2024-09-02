@@ -104,7 +104,7 @@ calc_test_likelis <- function(object) {
       vec <- c()
       for(j in 1:dim(fitted_mvn_data)[2]) {
         curr_sigma <- matrix(fitted_mvn_data[(num_PC+1):(num_PC+num_PC^2),j,i], nrow = num_PC)
-        curr_eig <- eigen(curr_sigma)$values
+        curr_eig <- eigen(curr_sigma, symmetric = TRUE, only.values = TRUE)$values
         if (any(curr_eig < 0)) {
           sigma_used <- nearPD(curr_sigma, base.matrix = TRUE, ensureSymmetry = TRUE, eig.tol = 1e-05, conv.tol = 1e-06, posd.tol = 1e-07)$mat
         } else {
