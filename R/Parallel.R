@@ -157,3 +157,70 @@ calc_flat_theta_contrib_test_dev <- function(object) {
   object[['Test_Data']][['Flat_Contrib_to_Theta_df']] <- flat_contribution_df
   return(object)
 }
+
+
+###
+calc_train_likelis_dev_test <- function(object) {
+  svd_data <- object[['Projections']][['SVD_Per_Time_Point']]
+  fitted_mvn_data <- object[['Projections']][['Fitted_MVN_Interpolated']]
+  train_exp_data <- object[['Train']][['Normalised_Train_Exp_Data']]
+  num_PC <- object[['PC_Num']]
+
+  out_list <- foreach(i = 1:length(names(svd_data)), .combine = 'c', .inorder = TRUE, .multicombine = TRUE, .packages = c('Matrix','mvtnorm','foreach')) %dopar% {
+    project_exp_mat <- svd_data[[i]] %*% train_exp_data
+    mat <- matrix(NA, nrow = dim(fitted_mvn_data)[2], ncol = dim(train_exp_data)[2])
+    for (ind_num in 1:dim(train_exp_data)[2]) {
+      vec <- numeric(length = dim(fitted_mvn_data)[2])
+      for (j in 1:dim(fitted_mvn_data)[2]) {
+        curr_sigma <- matrix(fitted_mvn_data[(num_PC+1):(num_PC+num_PC^2),j,i], nrow = num_PC)
+        curr_eig <- eigen(curr_sigma, symmetric = TRUE, only.values = TRUE)$values
+        if (any(curr_eig < 0)) {
+          sigma_used <- nearPD(curr_sigma, base.matrix = TRUE, ensureSymmetry = TRUE, eig.tol = 1e-05, conv.tol = 1e-06, posd.tol = 1e-07)$mat
+        } else {
+          sigma_used <- curr_sigma
+        }
+
+        vec[j] <- mvtnorm::dmvnorm(project_exp_mat[,ind_num], mean = fitted_mvn_data[1:num_PC,j,i], sigma = sigma_used, checkSymmetry = FALSE, log = TRUE)
+
+      }
+      mat[ ,ind_num] <- vec
+    }
+  mat
+  }
+
+  object[['Train_Data']][['Train_Likelihood_Array']] <- array(out_list, dim = c(dim(fitted_mvn_data)[2], dim(train_exp_data)[2], dim(fitted_mvn_data)[3]))
+  return(object)
+}
+
+
+calc_test_likelis_dev_test <- function(object) {
+  svd_data <- object[['Projections']][['SVD_Per_Time_Point']]
+  fitted_mvn_data <- object[['Projections']][['Fitted_MVN_Interpolated']]
+  test_exp_data <- object[['Test_Data']][['Normalised_Test_Exp_Data']]
+  num_PC <- object[['PC_Num']]
+
+  out_list <- foreach(i = 1:length(names(svd_data)), .combine = 'c', .inorder = TRUE, .multicombine = TRUE, .packages = c('Matrix','mvtnorm','foreach')) %dopar% {
+    project_exp_mat <- svd_data[[i]] %*% test_exp_data
+    mat <- matrix(NA, nrow = dim(fitted_mvn_data)[2], ncol = dim(test_exp_data)[2])
+    for (ind_num in 1:dim(test_exp_data)[2]) {
+      vec <- numeric(length = dim(fitted_mvn_data)[2])
+      for (j in 1:dim(fitted_mvn_data)[2]) {
+        curr_sigma <- matrix(fitted_mvn_data[(num_PC+1):(num_PC+num_PC^2),j,i], nrow = num_PC)
+        curr_eig <- eigen(curr_sigma, symmetric = TRUE, only.values = TRUE)$values
+        if (any(curr_eig < 0)) {
+          sigma_used <- nearPD(curr_sigma, base.matrix = TRUE, ensureSymmetry = TRUE, eig.tol = 1e-05, conv.tol = 1e-06, posd.tol = 1e-07)$mat
+        } else {
+          sigma_used <- curr_sigma
+        }
+
+        vec[j] <- mvtnorm::dmvnorm(project_exp_mat[,ind_num], mean = fitted_mvn_data[1:num_PC,j,i], sigma = sigma_used, checkSymmetry = FALSE, log = TRUE)
+
+      }
+      mat[ ,ind_num] <- vec
+    }
+    mat
+  }
+
+  object[['Test_Data']][['Test_Likelihood_Array']] <- array(out_list, dim = dim(fitted_mvn_data)[2], dim(test_exp_data)[2], dim(fitted_mvn_data)[3])
+  return(object)
+}

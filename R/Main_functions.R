@@ -102,7 +102,7 @@ train_model <- function(exp_matrix, genes, group_1, group_2, group_3, time, repl
   object <- get_mvn_interpolated(object, num_interp_points = num_interp_points, interp_method = interp_method, cov_path = cov_path)
   message('Calculating likelihoods...')
   if(parallel_comp) {
-    object <- calc_train_likelis_dev(object)
+    object <- calc_train_likelis_dev_test(object)
   } else {
     object <- calc_train_likelis(object)
   }
@@ -263,7 +263,7 @@ test_model <- function(object, exp_matrix, test_grouping_vars, test_group_1, tes
   message('Test data loaded and successfully normalised')
   message('Calculating likelihoods...')
   if(parallel_comp) {
-    object <- calc_test_likelis_dev(object)
+    object <- calc_test_likelis_dev_test(object)
   } else {
     object <- calc_test_likelis(object)
   }
