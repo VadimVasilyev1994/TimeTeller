@@ -221,6 +221,6 @@ calc_test_likelis_dev_test <- function(object) {
     mat
   }
 
-  object[['Test_Data']][['Test_Likelihood_Array']] <- array(out_list, dim = dim(fitted_mvn_data)[2], dim(test_exp_data)[2], dim(fitted_mvn_data)[3])
+  object[['Test_Data']][['Test_Likelihood_Array']] <- array(out_list, dim = c(dim(fitted_mvn_data)[2], dim(test_exp_data)[2], dim(fitted_mvn_data)[3]))
   return(object)
 }
